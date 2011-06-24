@@ -1,4 +1,7 @@
 class HookError(StandardError):
+    """
+    Error raised by problems with pre/post hooks.
+    """
     pass
 
 
@@ -36,48 +39,49 @@ class Service(object):
         """
         # We only want to muck with method lookup for our API methods.
         if name in self.HOOK_METHOD_NAMES:
-            def fn(*args, **kwargs):
+            def fun(*args, **kwargs):
                 # This function will be returned instead of the API
                 # method that was originally called.
-                hook_results = []
                 for hook in object.__getattribute__(self,
                                                     'pre_%s_hooks' % name):
 
                     try:
-                        hook_results.append(hook(args, kwargs))
+                        hook_result = hook(args, kwargs)
                     except:
                         # The contract for hooks is that if they raise
                         # an exception, that exception will be caught
                         # and we will treat it as though the hook
                         # returned False instead.
-                        hook_results.append(False)
-                if not all(hook_results):
-                    # Every hook must return true in order to proceed.
-                    raise HookError('pre_%s_hooks failed!' % name)
+                        hook_result = False
+                    if not hook_result:
+                        raise HookError('pre_%s_hooks failed!' % name)
                 # Store the result of calling the originally-requested
                 # method so we can return it as the return value of
                 # this function that wraps it.
                 result = object.__getattribute__(name)(args, kwargs)
                 # The below block is just a re-hash of what we do
                 # above for the pre-hooks.
-                hook_results = []
                 for hook in object.__getattribute__(self,
                                                     'post_%s_hooks' % name):
                     try:
-                        hook_results.append(hook(args, kwargs))
+                        hook_result = hook(args, kwargs)
                     except:
-                        hook_results.append(False)
-                if not all(hook_results):
-                    raise HookError('post_%s_hooks failed!' % name)
+                        # The contract for hooks is that if they raise
+                        # an exception, that exception will be caught
+                        # and we will treat it as though the hook
+                        # returned False instead.
+                        hook_result = False
+                    if not hook_result:
+                        raise HookError('pre_%s_hooks failed!' % name)
                 return result
 
-            return fn
+            return fun
         else:
             # Just do normal attribute lookup on attributes that are
             # not part of the API.
             return object.__getattribute__(self, name)
 
-    def add_hook(name, fn):
+    def add_hook(self, name, fun):
         """
         Adds a pre/post hook to the given service method. pre/post
         hooks are functions which take *args and **kwargs and return a
@@ -86,9 +90,9 @@ class Service(object):
         you should do your own logging in your hooks!
         """
         stage, sep, action = name.partition('_')
-        if stage not in STAGES or action not in HOOK_METHOD_NAMES:
+        if stage not in self.STAGES or action not in self.HOOK_METHOD_NAMES:
             raise HookError('No such hook: %s' % name)
-        self.__getattribute__('%s_hooks' % name).append(fn)
+        self.__getattribute__('%s_hooks' % name).append(fun)
 
 # Methods that define the Service API.
 
