@@ -31,6 +31,15 @@ class Service(object):
 
 # Services class functionality for use by subclasses.
 
+    def _run_hooks(self, name, *args, *kwargs):
+        """
+        Run the specified hooks. If any hook returns False, raise a
+        HookError.
+        """
+        for hook in object.__getattribute__(self, '%s_hooks' % name):
+            if not hook(args, kwargs):
+                raise HookError('%s_hooks failed!' % name)
+
     def __getattribute__(self, name):
         """
         Overrides attribute lookup for services so that if the
@@ -42,39 +51,13 @@ class Service(object):
             def fun(*args, **kwargs):
                 # This function will be returned instead of the API
                 # method that was originally called.
-                for hook in object.__getattribute__(self,
-                                                    'pre_%s_hooks' % name):
-
-                    try:
-                        hook_result = hook(args, kwargs)
-                    except:
-                        # The contract for hooks is that if they raise
-                        # an exception, that exception will be caught
-                        # and we will treat it as though the hook
-                        # returned False instead.
-                        hook_result = False
-                    if not hook_result:
-                        raise HookError('pre_%s_hooks failed!' % name)
+                self._run_hooks('pre_%s' % name)
                 # Store the result of calling the originally-requested
                 # method so we can return it as the return value of
                 # this function that wraps it.
                 result = object.__getattribute__(name)(args, kwargs)
-                # The below block is just a re-hash of what we do
-                # above for the pre-hooks.
-                for hook in object.__getattribute__(self,
-                                                    'post_%s_hooks' % name):
-                    try:
-                        hook_result = hook(args, kwargs)
-                    except:
-                        # The contract for hooks is that if they raise
-                        # an exception, that exception will be caught
-                        # and we will treat it as though the hook
-                        # returned False instead.
-                        hook_result = False
-                    if not hook_result:
-                        raise HookError('pre_%s_hooks failed!' % name)
+                self._run_hooks('post_%s' % name)
                 return result
-
             return fun
         else:
             # Just do normal attribute lookup on attributes that are
@@ -84,10 +67,8 @@ class Service(object):
     def add_hook(self, name, fun):
         """
         Adds a pre/post hook to the given service method. pre/post
-        hooks are functions which take *args and **kwargs and return a
-        boolean. Any exception raised in a hook will be caught and the
-        hook will be treated as though it returned False. This means
-        you should do your own logging in your hooks!
+        hooks are functions which take *args and **kwargs and return
+        True if the hook succeeds and False otherwise.
         """
         stage, sep, action = name.partition('_')
         if stage not in self.STAGES or action not in self.HOOK_METHOD_NAMES:
