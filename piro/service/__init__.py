@@ -50,7 +50,7 @@ class Service(object):
         returned function is one that calls the pre/post hooks.
         """
         # We only want to muck with method lookup for our API methods.
-        if name in self.HOOK_METHOD_NAMES:
+        if name in object.__getattribute__(self, 'HOOK_METHOD_NAMES'):
             def fun(*args, **kwargs):
                 # This function will be returned instead of the API
                 # method that was originally called.
