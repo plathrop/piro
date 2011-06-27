@@ -82,6 +82,7 @@ class Service(object):
         hooks are functions which take *args and **kwargs and return
         True if the hook succeeds and False otherwise.
         """
+        name = name.replace('-', '_')
         stage, sep, action = name.partition('_')
         if stage not in self.STAGES or action not in self.HOOK_METHOD_NAMES:
             raise HookError('No such hook: %s' % name)
