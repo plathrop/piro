@@ -34,7 +34,7 @@ class Service(object):
 
 # Services class functionality for use by subclasses.
 
-    def _run_hooks(self, name, *args, *kwargs):
+    def _run_hooks(self, name, *args, **kwargs):
         """
         Run the specified hooks. If any hook returns False, raise a
         HookError.
