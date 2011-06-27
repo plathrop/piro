@@ -52,6 +52,9 @@ class Service(object):
         # We only want to muck with method lookup for our API methods.
         if name in object.__getattribute__(self, 'HOOK_METHOD_NAMES'):
             def fun(*args, **kwargs):
+                """
+                Wraps a method call with pre/post hooks.
+                """
                 # This function will be returned instead of the API
                 # method that was originally called.
                 self._run_hooks('pre_%s' % name)

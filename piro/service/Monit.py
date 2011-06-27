@@ -5,9 +5,11 @@ from xml.etree import ElementTree
 
 from piro.service import Service
 
+
 class MonitAPIError(StandardError):
     """
-    Error raised when encountering problems communicating with the Monit web API.
+    Error raised when encountering problems communicating with the
+    Monit web API.
     """
     pass
 
@@ -55,17 +57,22 @@ class Monit(Service):
     opener = None
     uri = ''
 
-    def __init__(self, name, host, control_name=None, username='', password='', port=2812, realm='monit'):
+    def __init__(self, name, host,
+                 control_name=None,
+                 username='',
+                 password='',
+                 port=2812,
+                 realm='monit'):
         """
         Initialize a service controlled by Monit.
         """
         Service.__init__(self, name, control_name=control_name)
         self.uri = 'http://%s:%s' % (host, port)
         # Configure HTTP Basic Authentication for the Monit web API.
-        self.auth.add_password(realm = realm,
-                               uri = self.uri,
-                               user = username,
-                               passwd = password)
+        self.auth.add_password(realm=realm,
+                               uri=self.uri,
+                               user=username,
+                               passwd=password)
         self.opener = url.build_opener(self.auth)
         url.install_opener(self.opener)
 
@@ -92,7 +99,8 @@ class Monit(Service):
         if len(services) < 1:
             raise MonitAPIError('Service %s not found' % self.control_name)
         elif len(services) > 1:
-            raise MonitAPIError('Multiple service entries found for %s' % self.control_name)
+            raise MonitAPIError('Multiple service entries found for %s' %
+                                self.control_name)
         else:
             stat = {}
             service = services[0]
@@ -100,9 +108,9 @@ class Monit(Service):
             pid = service.find('pid')
             if pid:
                 stat['pid'] = int(pid.text)
-            up = service.find('uptime')
-            if up:
-                stat['uptime'] = int(up.text)
+            uptime = service.find('uptime')
+            if uptime:
+                stat['uptime'] = int(uptime.text)
             return stat
 
     def enable(self, wait=False, *args, **kwargs):
@@ -119,7 +127,7 @@ class Monit(Service):
         if state[0]:
             return self.status()
         uri = '%s/%s' % (self.uri, self.control_name)
-        res = url.urlopen(uri, urlencode({'action': 'monitor'}), timeout=1)
+        url.urlopen(uri, urlencode({'action': 'monitor'}), timeout=1)
         if not wait:
             return self.status()
         else:
@@ -144,7 +152,7 @@ class Monit(Service):
         if not state[0]:
             return self.status()
         uri = '%s/%s' % (self.uri, self.control_name)
-        res = url.urlopen(uri, urlencode({'action': 'unmonitor'}), timeout=1)
+        url.urlopen(uri, urlencode({'action': 'unmonitor'}), timeout=1)
         if not wait:
             return self.status()
         else:
@@ -154,6 +162,12 @@ class Monit(Service):
                 sleep(.1)
                 state = self.status()['state']
             return self.status()
+
+    def reload(self, *args, **kwargs):
+        """
+        Reload is not supported by Monit.
+        """
+        raise MonitAPIError('Reload is not supported by Monit.')
 
     def start(self, wait=False, *args, **kwargs):
         """
@@ -168,7 +182,7 @@ class Monit(Service):
         if state[1]:
             return self.status()
         uri = '%s/%s' % (self.uri, self.control_name)
-        res = url.urlopen(uri, urlencode({'action': 'start'}), timeout=1)
+        url.urlopen(uri, urlencode({'action': 'start'}), timeout=1)
         if not wait:
             return self.status()
         else:
@@ -192,7 +206,7 @@ class Monit(Service):
         if not state[1]:
             return self.status()
         uri = '%s/%s' % (self.uri, self.control_name)
-        res = url.urlopen(uri, urlencode({'action': 'stop'}), timeout=1)
+        url.urlopen(uri, urlencode({'action': 'stop'}), timeout=1)
         if not wait:
             return self.status()
         else:
