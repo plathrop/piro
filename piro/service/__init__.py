@@ -58,7 +58,7 @@ class Service(object):
                 # Store the result of calling the originally-requested
                 # method so we can return it as the return value of
                 # this function that wraps it.
-                result = object.__getattribute__(name)(args, kwargs)
+                result = object.__getattribute__(self, name)(args, kwargs)
                 self._run_hooks('post_%s' % name)
                 return result
             return fun
