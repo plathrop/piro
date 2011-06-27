@@ -11,6 +11,41 @@ class MonitAPIError(StandardError):
     """
     pass
 
+
+def parse_monit_status(element):
+    """
+    Given an XML element representing a service, extract the
+    status information and return a tuple representing that
+    status. The tuple will be of the form (enable_state,
+    run_state) where enable_state is a boolean representing
+    whether the service is enabled or not, and run_state is a
+    boolean representing whether the service is running or
+    not. The value None for either component is to indicate that
+    it is either unknown or does not make sense for the service.
+    """
+    # The 'monitor' element tells us whether Monit is actively
+    # controlling the service or not. A 0 means Monit is not
+    # controlling the service. Sadly, when the service is stopped
+    # by Monit, this element says Monit is *not* controlling the
+    # service, even though it is. So, potentially, the service
+    # could be running, but Monit has been told not to control
+    # it. However, usually that is not the case and we're taking a
+    # shortcut here by assuming it isn't.
+    monitor = int(element.find('monitor').text)
+    if monitor == 0:
+        return (False, False)
+    # The 'status' element tells us whether the service is running
+    # or not. Any value other than 0 means the service is not
+    # running. More specific info is available via the web API,
+    # but lacking any documentation on what it means, that
+    # information is useless and we don't bother looking at it.
+    status = int(element.find('status').text)
+    if status == 0:
+        return (True, True)
+    else:
+        return (True, False)
+
+
 class Monit(Service):
     """
     Controls a service via the Monit web API.
@@ -33,41 +68,6 @@ class Monit(Service):
                                passwd = password)
         self.opener = url.build_opener(self.auth)
         url.install_opener(self.opener)
-
-    def _parse_status(self, element):
-        """
-        Given an XML element representing this service, extract the
-        status information and return a tuple representing that
-        status. The tuple will be of the form (enable_state,
-        run_state) where enable_state is a boolean representing
-        whether the service is enabled or not, and run_state is a
-        boolean representing whether the service is running or
-        not. The value None for either component is to indicate that
-        it is either unknown or does not make sense for the service.
-        """
-        # The 'monitor' element tells us whether Monit is actively
-        # controlling the service or not. A 0 means Monit is not
-        # controlling the service. Sadly, when the service is stopped
-        # by Monit, this element says Monit is *not* controlling the
-        # service, even though it is. So, potentially, the service
-        # could be running, but Monit has been told not to control
-        # it. However, usually that is not the case and we're taking a
-        # shortcut here by assuming it isn't.
-        monitor = int(element.find('monitor').text)
-        if monitor == 0:
-            return (False, False)
-        # The 'status' element tells us whether the service is running
-        # or not. Any value other than 0 means the service is not
-        # running. More specific info is available via the web API,
-        # but lacking any documentation on what it means, that
-        # information is useless and we don't bother looking at it.
-        status = int(element.find('status').text)
-        if status == 0:
-            return (True, True)
-        else:
-            return (True, False)
-        # This piece of code should never be executed, but CYA.
-        return (None, None)
 
     def status(self, *args, **kwargs):
         """
@@ -96,7 +96,7 @@ class Monit(Service):
         else:
             stat = {}
             service = services[0]
-            stat['state'] = self._parse_status(service)
+            stat['state'] = parse_monit_status(service)
             pid = service.find('pid')
             if pid:
                 stat['pid'] = int(pid.text)
