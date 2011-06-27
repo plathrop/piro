@@ -29,6 +29,9 @@ class Service(object):
     pre_stop_hooks = []
     post_stop_hooks = []
 
+    name = None
+    control_name = None
+
 # Services class functionality for use by subclasses.
 
     def _run_hooks(self, name, *args, *kwargs):
@@ -63,6 +66,15 @@ class Service(object):
             # Just do normal attribute lookup on attributes that are
             # not part of the API.
             return object.__getattribute__(self, name)
+
+    def __init__(self, name, control_name=None):
+        """
+        Initialize a Service object. Services have a 'name' - a
+        human-friendly name, and a 'control_name' - the name that the
+        underlying service control system uses for the Service.
+        """
+        self.name = name
+        self.control_name = control_name
 
     def add_hook(self, name, fun):
         """
