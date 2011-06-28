@@ -1,7 +1,6 @@
 """
 Base Service class and related helpers.
 """
-
 class HookError(StandardError):
     """
     Error raised by problems with pre/post hooks.
@@ -17,24 +16,6 @@ class Service(object):
 
     STAGES = ['pre', 'post']
     HOOK_METHOD_NAMES = ['enable', 'disable', 'reload', 'start', 'stop']
-
-    pre_enable_hooks = []
-    post_enable_hooks = []
-
-    pre_disable_hooks = []
-    post_disable_hooks = []
-
-    pre_reload_hooks = []
-    post_reload_hooks = []
-
-    pre_start_hooks = []
-    post_start_hooks = []
-
-    pre_stop_hooks = []
-    post_stop_hooks = []
-
-    name = None
-    control_name = None
 
 # Services class functionality for use by subclasses.
 
@@ -76,10 +57,14 @@ class Service(object):
 
     def __init__(self, name, control_name=None):
         """
-        Initialize a Service object. Services have a 'name' - a
-        human-friendly name, and a 'control_name' - the name that the
-        underlying service control system uses for the Service.
+        Initialize a Service object. Services have a human-friendly
+        'name' and a 'control_name' that the underlying service
+        control system uses for the Service.
         """
+        for stage in self.STAGES:
+            for method in self.HOOK_METHOD_NAMES:
+                self.__setattr__(self, '%s_%s_hooks' % (stage, method), [])
+
         self.name = name
         self.control_name = control_name
 
