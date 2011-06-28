@@ -1,3 +1,7 @@
+"""
+Classes and functions for handling services controlled by Monit.
+"""
+
 from contextlib import closing
 from time import sleep
 from urllib import urlencode

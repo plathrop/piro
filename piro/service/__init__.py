@@ -1,3 +1,7 @@
+"""
+Base Service class and related helpers.
+"""
+
 class HookError(StandardError):
     """
     Error raised by problems with pre/post hooks.
