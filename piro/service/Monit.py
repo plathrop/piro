@@ -126,8 +126,9 @@ class Monit(Service):
         state = self.status()['state']
         if state[0]:
             return self.status()
-        uri = '%s/%s' % (self.uri, self.control_name)
-        url.urlopen(uri, urlencode({'action': 'monitor'}), timeout=1)
+        url.urlopen('%s/%s' % (self.uri, self.control_name),
+                    urlencode({'action': 'monitor'}),
+                    timeout=1)
         if not wait:
             return self.status()
         else:
@@ -152,7 +153,9 @@ class Monit(Service):
         if not state[0]:
             return self.status()
         uri = '%s/%s' % (self.uri, self.control_name)
-        url.urlopen(uri, urlencode({'action': 'unmonitor'}), timeout=1)
+        url.urlopen('%s/%s' % (self.uri, self.control_name),
+                    urlencode({'action': 'unmonitor'}),
+                    timeout=1)
         if not wait:
             return self.status()
         else:
@@ -182,7 +185,9 @@ class Monit(Service):
         if state[1]:
             return self.status()
         uri = '%s/%s' % (self.uri, self.control_name)
-        url.urlopen(uri, urlencode({'action': 'start'}), timeout=1)
+        url.urlopen('%s/%s' % (self.uri, self.control_name),
+                    urlencode({'action': 'start'}),
+                    timeout=1)
         if not wait:
             return self.status()
         else:
@@ -206,7 +211,9 @@ class Monit(Service):
         if not state[1]:
             return self.status()
         uri = '%s/%s' % (self.uri, self.control_name)
-        url.urlopen(uri, urlencode({'action': 'stop'}), timeout=1)
+        url.urlopen('%s/%s' % (self.uri, self.control_name),
+                    urlencode({'action': 'stop'}),
+                    timeout=1)
         if not wait:
             return self.status()
         else:
