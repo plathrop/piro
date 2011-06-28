@@ -77,7 +77,7 @@ class Monit(Service):
         self.opener = url.build_opener(self.auth)
         url.install_opener(self.opener)
 
-    def status(self, *args, **kwargs):
+    def status(self):
         """
         Returns the status of the service as a dict.
         """
@@ -112,7 +112,7 @@ class Monit(Service):
             stat['uptime'] = int(uptime.text)
         return stat
 
-    def enable(self, wait=False, *args, **kwargs):
+    def enable(self, wait=False):
         """
         If the service is already enabled, this is a no-op. If the
         service is not enabled, run any pre-enable hooks. If these
@@ -138,7 +138,7 @@ class Monit(Service):
                 state = self.status()['state']
             return self.status()
 
-    def disable(self, wait=False, *args, **kwargs):
+    def disable(self, wait=False):
         """
         If the service is already disabled, this is a no-op. If the
         service is enabled, run any pre-disable hooks. If these hooks
@@ -165,13 +165,13 @@ class Monit(Service):
                 state = self.status()['state']
             return self.status()
 
-    def reload(self, *args, **kwargs):
+    def reload(self):
         """
         Reload is not supported by Monit.
         """
         raise MonitAPIError('Reload is not supported by Monit.')
 
-    def start(self, wait=False, *args, **kwargs):
+    def start(self, wait=False):
         """
         If the service is already running, this is a no-op. If the
         service is not running, run any pre-start hooks. If these
@@ -197,7 +197,7 @@ class Monit(Service):
                 state = self.status()['state']
             return self.status()
 
-    def stop(self, wait=False, *args, **kwargs):
+    def stop(self, wait=False):
         """
         If the service is already stopped, this is a no-op. If the
         service is running, run any pre-stop hooks. If these hooks ran

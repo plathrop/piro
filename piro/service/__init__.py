@@ -34,13 +34,13 @@ class Service(object):
 
 # Services class functionality for use by subclasses.
 
-    def _run_hooks(self, name, *args, **kwargs):
+    def _run_hooks(self, name):
         """
         Run the specified hooks. If any hook returns False, raise a
         HookError.
         """
         for hook in object.__getattribute__(self, '%s_hooks' % name):
-            if not hook(args, kwargs):
+            if not hook():
                 raise HookError('%s_hooks failed!' % name)
 
     def __getattribute__(self, name):
@@ -51,7 +51,7 @@ class Service(object):
         """
         # We only want to muck with method lookup for our API methods.
         if name in object.__getattribute__(self, 'HOOK_METHOD_NAMES'):
-            def fun(*args, **kwargs):
+            def fun():
                 """
                 Wraps a method call with pre/post hooks.
                 """
@@ -61,7 +61,7 @@ class Service(object):
                 # Store the result of calling the originally-requested
                 # method so we can return it as the return value of
                 # this function that wraps it.
-                result = object.__getattribute__(self, name)(args, kwargs)
+                result = object.__getattribute__(self, name)()
                 self._run_hooks('post_%s' % name)
                 return result
             return fun
@@ -82,8 +82,8 @@ class Service(object):
     def add_hook(self, name, fun):
         """
         Adds a pre/post hook to the given service method. pre/post
-        hooks are functions which take *args and **kwargs and return
-        True if the hook succeeds and False otherwise.
+        hooks are functions which return True if the hook succeeds and
+        False otherwise.
         """
         name = name.replace('-', '_')
         stage, sep, action = name.partition('_')
@@ -93,7 +93,7 @@ class Service(object):
 
 # Methods that define the Service API.
 
-    def status(self, *args, **kwargs):
+    def status(self):
         """
         Return the status of the service. Service status should be
         returned as a dict. The status dict MUST contain the key
@@ -108,7 +108,7 @@ class Service(object):
         """
         raise NotImplementedError
 
-    def enable(self, *args, **kwargs):
+    def enable(self):
         """
         If the service is already enabled, this is a no-op. If the
         service is not enabled, run any pre-enable hooks. If these
@@ -120,7 +120,7 @@ class Service(object):
         """
         raise NotImplementedError
 
-    def disable(self, *args, **kwargs):
+    def disable(self):
         """
         If the service is already disabled, this is a no-op. If the
         service is enabled, run any pre-disable hooks. If these hooks
@@ -132,7 +132,7 @@ class Service(object):
         """
         raise NotImplementedError
 
-    def reload(self, *args, **kwargs):
+    def reload(self):
         """
         First, run any pre-reload hooks. Then, attempt to reload the
         configuration of the service. Next, run any post-reload
@@ -141,7 +141,7 @@ class Service(object):
         """
         raise NotImplementedError
 
-    def start(self, *args, **kwargs):
+    def start(self):
         """
         If the service is already running, this is a no-op. If the
         service is not running, run any pre-start hooks. If these
@@ -151,7 +151,7 @@ class Service(object):
         """
         raise NotImplementedError
 
-    def stop(self, *args, **kwargs):
+    def stop(self):
         """
         If the service is already stopped, this is a no-op. If the
         service is running, run any pre-stop hooks. If these hooks ran
@@ -161,7 +161,7 @@ class Service(object):
         """
         raise NotImplementedError
 
-    def restart(self, *args, **kwargs):
+    def restart(self):
         """
         First, call stop() on the service, then call start() on the
         service. Finally return the result of calling status() on the
