@@ -1,3 +1,4 @@
+from contextlib import closing
 from time import sleep
 from urllib import urlencode
 import urllib2 as url
@@ -80,9 +81,9 @@ class Monit(Service):
         """
         Returns the status of the service as a dict.
         """
-        uri = '%s/_status?format=xml' % self.uri
-        res = url.urlopen(uri, timeout=1)
-        data = res.read()
+        with closing(url.urlopen('%s/_status?format=xml' % self.uri,
+                                 timeout=1)) as res:
+            data = res.read()
         if not data:
             raise MonitAPIError('No content from server')
         tree = ElementTree.fromstring(data)
