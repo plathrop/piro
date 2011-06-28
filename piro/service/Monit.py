@@ -121,7 +121,7 @@ class Monit(Service):
         # and contains information about resource usage.
         services = [element for element in tree.getiterator('service')
                     if int(element.get('type')) == 3
-                    and s.find('name').text == self.control_name]
+                    and element.find('name').text == self.control_name]
         if len(services) < 1:
             raise MonitAPIError('Service %s not found' % self.control_name)
         elif len(services) > 1:
