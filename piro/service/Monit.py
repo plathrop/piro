@@ -77,6 +77,32 @@ class Monit(Service):
         self.opener = url.build_opener(self.auth)
         url.install_opener(self.opener)
 
+    def _api_call(self, action, check_fn, wait=False):
+        """
+        Given an action, perform the actual Monit API call for that
+        action, optionally waiting for the state change to occur. This
+        call is a no-op if the current state already matches the
+        desired state. The state is checked via the check_fn
+        parameter, which should be a function taking a single argument
+        representing a state tuple, and returning a boolean True if
+        the state matches the desired state.
+        """
+        status = self.status()
+        if check_fn(status['state']):
+            return status
+        with closing(url.urlopen('%s/%s' % (self.uri, self.control_name),
+                                 urlencode({'action': action}),
+                                 timeout=1)) as res:
+            # We don't actually want to do anything with the result,
+            # but we don't want to leave it just hanging around, so
+            # read and discard.
+            res.read()
+        if wait:
+            while not check_fn(status['state']):
+                sleep(.1)
+                status = self.status()
+        return status
+
     def status(self):
         """
         Returns the status of the service as a dict.
@@ -101,16 +127,16 @@ class Monit(Service):
         elif len(services) > 1:
             raise MonitAPIError('Multiple service entries found for %s' %
                                 self.control_name)
-        stat = {}
+        status = {}
         service = services[0]
-        stat['state'] = parse_monit_status(service)
+        status['state'] = parse_monit_status(service)
         pid = service.find('pid')
         if pid:
-            stat['pid'] = int(pid.text)
+            status['pid'] = int(pid.text)
             uptime = service.find('uptime')
         if uptime:
-            stat['uptime'] = int(uptime.text)
-        return stat
+            status['uptime'] = int(uptime.text)
+        return status
 
     def enable(self, wait=False):
         """
@@ -122,21 +148,9 @@ class Monit(Service):
         kwarg 'wait' is True, block until the state change is
         confirmed in the API.
         """
-        state = self.status()['state']
-        if state[0]:
-            return self.status()
-        url.urlopen('%s/%s' % (self.uri, self.control_name),
-                    urlencode({'action': 'monitor'}),
-                    timeout=1)
-        if not wait:
-            return self.status()
-        else:
-            sleep(.1)
-            state = self.status()['state']
-            while not state[0]:
-                sleep(.1)
-                state = self.status()['state']
-            return self.status()
+        return self._api_call('monitor',
+                              lambda state: state[0] is True,
+                              wait=wait)
 
     def disable(self, wait=False):
         """
@@ -148,22 +162,9 @@ class Monit(Service):
         kwarg 'wait' is True, block until the state change is
         confirmed in the API.
         """
-        state = self.status()['state']
-        if not state[0]:
-            return self.status()
-        uri = '%s/%s' % (self.uri, self.control_name)
-        url.urlopen('%s/%s' % (self.uri, self.control_name),
-                    urlencode({'action': 'unmonitor'}),
-                    timeout=1)
-        if not wait:
-            return self.status()
-        else:
-            sleep(.1)
-            state = self.status()['state']
-            while state[0]:
-                sleep(.1)
-                state = self.status()['state']
-            return self.status()
+        return self._api_call('unmonitor',
+                              lambda state: state[0] is False,
+                              wait=wait)
 
     def reload(self):
         """
@@ -180,22 +181,9 @@ class Monit(Service):
         status() on the service. If the kwarg 'wait' is True, block
         until the state change is confirmed in the API.
         """
-        state = self.status()['state']
-        if state[1]:
-            return self.status()
-        uri = '%s/%s' % (self.uri, self.control_name)
-        url.urlopen('%s/%s' % (self.uri, self.control_name),
-                    urlencode({'action': 'start'}),
-                    timeout=1)
-        if not wait:
-            return self.status()
-        else:
-            sleep(.1)
-            state = self.status()['state']
-            while not state[1]:
-                sleep(.1)
-                state = self.status()['state']
-            return self.status()
+        return self._api_call('start',
+                              lambda state: state[1] is True,
+                              wait=wait)
 
     def stop(self, wait=False):
         """
@@ -206,19 +194,6 @@ class Monit(Service):
         status() on the service. If the kwarg 'wait' is True, block
         until the state change is confirmed in the API.
         """
-        state = self.status()['state']
-        if not state[1]:
-            return self.status()
-        uri = '%s/%s' % (self.uri, self.control_name)
-        url.urlopen('%s/%s' % (self.uri, self.control_name),
-                    urlencode({'action': 'stop'}),
-                    timeout=1)
-        if not wait:
-            return self.status()
-        else:
-            sleep(.1)
-            state = self.status()['state']
-            while state[1]:
-                sleep(.1)
-                state = self.status()['state']
-            return self.status()
+        return self._api_call('stop',
+                              lambda state: state[1] is False,
+                              wait=wait)
