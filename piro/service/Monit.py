@@ -113,7 +113,7 @@ class Monit(Service):
         if not data:
             raise MonitAPIError('No content from server')
         tree = ElementTree.fromstring(data)
-        # Grab all the 'service' elements. We're interested in
+        # Grab the relevant 'service' element. We're interested in
         # 'service' elements with a 'type' attribute == 3 because
         # these are the actual services. Monit represents the host
         # itself, (and maybe other things), as 'service' elements with
