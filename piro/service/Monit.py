@@ -101,17 +101,16 @@ class Monit(Service):
         elif len(services) > 1:
             raise MonitAPIError('Multiple service entries found for %s' %
                                 self.control_name)
-        else:
-            stat = {}
-            service = services[0]
-            stat['state'] = parse_monit_status(service)
-            pid = service.find('pid')
-            if pid:
-                stat['pid'] = int(pid.text)
+        stat = {}
+        service = services[0]
+        stat['state'] = parse_monit_status(service)
+        pid = service.find('pid')
+        if pid:
+            stat['pid'] = int(pid.text)
             uptime = service.find('uptime')
-            if uptime:
-                stat['uptime'] = int(uptime.text)
-            return stat
+        if uptime:
+            stat['uptime'] = int(uptime.text)
+        return stat
 
     def enable(self, wait=False, *args, **kwargs):
         """
