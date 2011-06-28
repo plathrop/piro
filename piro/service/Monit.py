@@ -93,9 +93,8 @@ class Monit(Service):
         # a different 'type' (for example type == 5 is the host itself
         # and contains information about resource usage.
         services = [element for element in tree.getiterator('service')
-                    if int(element.get('type')) == 3]
-        services = filter(lambda s: s.find('name').text == self.control_name,
-                          services)
+                    if int(element.get('type')) == 3
+                    and s.find('name').text == self.control_name]
         if len(services) < 1:
             raise MonitAPIError('Service %s not found' % self.control_name)
         elif len(services) > 1:
