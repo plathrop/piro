@@ -79,7 +79,7 @@ class Service(object):
         """
         for stage in self.STAGES:
             for method in self.HOOK_METHOD_NAMES:
-                self.__setattr__(self, '%s_%s_hooks' % (stage, method), [])
+                self.__setattr__('%s_%s_hooks' % (stage, method), [])
 
         self.name = name
         self.control_name = control_name
