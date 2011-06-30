@@ -7,7 +7,7 @@ setup(name='piro',
       author_email='paul@simplegeo.com',
       url='https://github.com/plathrop/piro',
       packages=find_packages(),
-      install_requires=[],
+      install_requires=['argparse'],
       entry_points={'console_scripts':
                         ['piro = piro.cli:main']}
       )

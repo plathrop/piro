@@ -62,22 +62,32 @@ class Monit(Service):
     opener = None
     uri = ''
 
-    def __init__(self, name, host,
-                 control_name=None,
-                 username='',
-                 password='',
-                 port=2812,
-                 realm='monit'):
+    def _init_parser(self):
+        parser = Service._init_parser(self)
+        parser.add_argument('host',
+                            help='Host on which you wish to control the '
+                            'service.')
+        parser.add_argument('--port', type=int, default=2812,
+                            help='Port where the Monit API is listening on the '
+                            'given host')
+        parser.add_argument('--realm', default='monit',
+                            help='Authentication realm to use when '
+                            'authenticating to the Monit API.')
+        return parser
+
+    def __init__(self, name, control_name=None, svc_args=[]):
         """
         Initialize a service controlled by Monit.
         """
         Service.__init__(self, name, control_name=control_name)
-        self.uri = 'http://%s:%s' % (host, port)
+        parser = self._init_parser()
+        args = parser.parse_known_args(svc_args)[0]
+        self.uri = 'http://%s:%s' % (args.host, args.port)
         # Configure HTTP Basic Authentication for the Monit web API.
-        self.auth.add_password(realm=realm,
+        self.auth.add_password(realm=args.realm,
                                uri=self.uri,
-                               user=username,
-                               passwd=password)
+                               user=args.username,
+                               passwd=args.password)
         self.opener = url.build_opener(self.auth)
         url.install_opener(self.opener)
 

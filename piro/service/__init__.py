@@ -1,6 +1,8 @@
 """
 Base Service class and related helpers.
 """
+from argparse import ArgumentParser
+
 class HookError(StandardError):
     """
     Error raised by problems with pre/post hooks.
@@ -18,6 +20,20 @@ class Service(object):
     HOOK_METHOD_NAMES = ['enable', 'disable', 'reload', 'start', 'stop']
 
 # Services class functionality for use by subclasses.
+
+    def _init_parser(self):
+        """
+        Initializes the service-specific parser with common arguments
+        and returns it.
+        """
+        parser = ArgumentParser()
+        parser.add_argument('-u', '--username', default='',
+                            help='Username to use when authenticating to the '
+                          'underlying service control mechanism.')
+        parser.add_argument('--password', default='',
+                            help='Password to use when authenticating to the '
+                            'underlying service control mechanism.')
+        return parser
 
     def _run_hooks(self, name):
         """
@@ -67,6 +83,7 @@ class Service(object):
 
         self.name = name
         self.control_name = control_name
+        self.parser = self._init_parser()
 
     def add_hook(self, name, fun):
         """
