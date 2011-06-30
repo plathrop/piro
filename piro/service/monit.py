@@ -68,8 +68,8 @@ class Monit(Service):
                             help='Host on which you wish to control the '
                             'service.')
         parser.add_argument('--port', type=int, default=2812,
-                            help='Port where the Monit API is listening on the '
-                            'given host')
+                            help='Port where the Monit API is listening on '
+                            'the given host')
         parser.add_argument('--realm', default='monit',
                             help='Authentication realm to use when '
                             'authenticating to the Monit API.')

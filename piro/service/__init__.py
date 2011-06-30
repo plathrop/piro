@@ -3,6 +3,7 @@ Base Service class and related helpers.
 """
 from argparse import ArgumentParser
 
+
 class HookError(StandardError):
     """
     Error raised by problems with pre/post hooks.
