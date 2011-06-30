@@ -60,16 +60,16 @@ class Monit(Service):
 
     auth = url.HTTPBasicAuthHandler()
     opener = None
-    uri = ''
+    uri = {}
 
     def _init_parser(self):
         parser = Service._init_parser(self)
-        parser.add_argument('host',
-                            help='Host on which you wish to control the '
+        parser.add_argument('hosts', nargs='+',
+                            help='Hosts on which you wish to control the '
                             'service.')
         parser.add_argument('--port', type=int, default=2812,
                             help='Port where the Monit API is listening on '
-                            'the given host')
+                            'the given hosts')
         parser.add_argument('--realm', default='monit',
                             help='Authentication realm to use when '
                             'authenticating to the Monit API.')
@@ -82,16 +82,17 @@ class Monit(Service):
         Service.__init__(self, name, control_name=control_name)
         parser = self._init_parser()
         args = parser.parse_known_args(svc_args)[0]
-        self.uri = 'http://%s:%s' % (args.host, args.port)
-        # Configure HTTP Basic Authentication for the Monit web API.
-        self.auth.add_password(realm=args.realm,
-                               uri=self.uri,
-                               user=args.username,
-                               passwd=args.password)
+        for host in args.hosts:
+            self.uri[host] = 'http://%s:%s' % (host, args.port)
+            # Configure HTTP Basic Authentication for the Monit web API.
+            self.auth.add_password(realm=args.realm,
+                                   uri=self.uri[host],
+                                   user=args.username,
+                                   passwd=args.password)
         self.opener = url.build_opener(self.auth)
         url.install_opener(self.opener)
 
-    def _api_call(self, action, check_fn, wait=False):
+    def _api_call(self, host, action, check_fn, wait=False):
         """
         Given an action, perform the actual Monit API call for that
         action, optionally waiting for the state change to occur. This
@@ -101,10 +102,10 @@ class Monit(Service):
         representing a state tuple, and returning a boolean True if
         the state matches the desired state.
         """
-        status = self.status()
+        status = self._status(host)
         if check_fn(status['state']):
             return status
-        with closing(url.urlopen('%s/%s' % (self.uri, self.control_name),
+        with closing(url.urlopen('%s/%s' % (self.uri[host], self.control_name),
                                  urlencode({'action': action}),
                                  timeout=1)) as res:
             # We don't actually want to do anything with the result,
@@ -114,14 +115,14 @@ class Monit(Service):
         if wait:
             while not check_fn(status['state']):
                 sleep(.1)
-                status = self.status()
+                status = self._status(host)
         return status
 
-    def status(self):
+    def _status(self, host):
         """
         Returns the status of the service as a dict.
         """
-        with closing(url.urlopen('%s/_status?format=xml' % self.uri,
+        with closing(url.urlopen('%s/_status?format=xml' % self.uri[host],
                                  timeout=1)) as res:
             data = res.read()
         if not data:
@@ -152,6 +153,15 @@ class Monit(Service):
             status['uptime'] = int(uptime.text)
         return status
 
+    def status(self):
+        """
+        Returns the status of the service on each host.
+        """
+        status = {}
+        for host in self.uri.keys():
+            status[host] = self._status(host)
+        return status
+
     def enable(self, wait=False):
         """
         If the service is already enabled, this is a no-op. If the
@@ -162,9 +172,12 @@ class Monit(Service):
         kwarg 'wait' is True, block until the state change is
         confirmed in the API.
         """
-        return self._api_call('monitor',
-                              lambda state: state[0] is True,
-                              wait=wait)
+        status = {}
+        for host in self.uri.keys():
+            status[host] = self._api_call(host, 'monitor',
+                                          lambda state: state[0] is True,
+                                          wait=wait)
+        return status
 
     def disable(self, wait=False):
         """
@@ -176,9 +189,12 @@ class Monit(Service):
         kwarg 'wait' is True, block until the state change is
         confirmed in the API.
         """
-        return self._api_call('unmonitor',
-                              lambda state: state[0] is False,
-                              wait=wait)
+        status = {}
+        for host in self.uri.keys():
+            status[host] = self._api_call(host, 'unmonitor',
+                                          lambda state: state[0] is False,
+                                          wait=wait)
+        return status
 
     def reload(self):
         """
@@ -195,9 +211,12 @@ class Monit(Service):
         status() on the service. If the kwarg 'wait' is True, block
         until the state change is confirmed in the API.
         """
-        return self._api_call('start',
-                              lambda state: state[1] is True,
-                              wait=wait)
+        status = {}
+        for host in self.uri.keys():
+            status[host] = self._api_call(host, 'start',
+                                          lambda state: state[1] is True,
+                                          wait=wait)
+        return status
 
     def stop(self, wait=False):
         """
@@ -208,6 +227,9 @@ class Monit(Service):
         status() on the service. If the kwarg 'wait' is True, block
         until the state change is confirmed in the API.
         """
-        return self._api_call('stop',
-                              lambda state: state[1] is False,
-                              wait=wait)
+        status = {}
+        for host in self.uri.keys():
+            status[host] = self._api_call(host, 'stop',
+                                          lambda state: state[1] is False,
+                                          wait=wait)
+        return status
