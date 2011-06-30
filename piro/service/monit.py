@@ -145,10 +145,10 @@ class Monit(Service):
         service = services[0]
         status['state'] = parse_monit_status(service)
         pid = service.find('pid')
-        if pid:
+        if pid is not None:
             status['pid'] = int(pid.text)
-            uptime = service.find('uptime')
-        if uptime:
+        uptime = service.find('uptime')
+        if uptime is not None:
             status['uptime'] = int(uptime.text)
         return status
 
