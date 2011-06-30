@@ -1,5 +1,5 @@
-PLUGIN_DIRS = ['/usr/share/piro/plugins']
-SERVICE_MAP = {'DEFAULT', 'piro.service.Service'}
+PLUGIN_DIRS = []
+SERVICE_MAP = {}
 
 try:
     execfile('/etc/piro/config.py')
