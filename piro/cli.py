@@ -2,6 +2,7 @@
 Command line interface for piro.
 """
 from argparse import ArgumentParser
+import json
 import sys
 
 
@@ -49,8 +50,12 @@ def main():
     if args.control_name is None:
         args.control_name = args.service
     klass = get_class(args.service)
-    service = klass(args.service, control_name=args.control_name,
+    service = klass(args.service,
+                    control_name=args.control_name,
                     svc_args=svc_args)
+
     # Obviously I need to do something better than just printing out
     # the status dict here, but that polish can happen later.
-    print getattr(service, args.action)()
+    print json.dumps(getattr(service, args.action)(),
+                     sort_keys=True,
+                     indent=4)
