@@ -3,20 +3,9 @@ Command line interface for piro.
 """
 from argparse import ArgumentParser
 import json
-import os
 import sys
 
 import piro.config as conf
-
-
-def load_plugins(path):
-    for root, dirs, files in os.walk(path):
-        for name in files:
-            if name.endswith('.py') and not name.startswith('__'):
-                path = os.path.join(root, name)
-                # Strip .py and convert path separators to .s
-                module_name = '.'.join(path.rsplit('.', 1)[0].split(os.sep))
-                __import__(module_name)
 
 
 def get_class(service):
@@ -29,12 +18,13 @@ def get_class(service):
         name = conf.SERVICE_MAP[service]
     except KeyError:
         pass
-    try:
-        name = conf.SERVICE_MAP['DEFAULT']
-    except KeyError:
-        print('No custom class configured for service %s, and no DEFAULT '
-              'class was found!' % service)
-        sys.exit(1)
+    if name is None:
+        try:
+            name = conf.SERVICE_MAP['DEFAULT']
+        except KeyError:
+            print('No custom class configured for service %s, and no DEFAULT '
+                  'class was found!' % service)
+            sys.exit(1)
     module_name, klass = name.rsplit('.', 1)
     __import__(module_name)
     module = sys.modules[module_name]
@@ -57,8 +47,6 @@ def main():
     args, svc_args = parser.parse_known_args()
     if args.control_name is None:
         args.control_name = args.service
-    for dir in conf.PLUGIN_DIRS:
-        load_plugins(dir)
     klass = get_class(args.service)
     service = klass(args.service,
                     control_name=args.control_name,
