@@ -1,5 +1,10 @@
 """
-Classes and functions for handling services controlled by Monit.
+The monit module provides a buit-in service control class for
+controlling services running under Monit_. This class assumes your
+services are exposed remotely by the `Monit HTTP service`_.
+
+.. _Monit: http://mmonit.com/monit/
+.. _Monit HTTP service: http://mmonit.com/monit/documentation/monit.html#monit_httpd
 """
 
 from contextlib import closing
@@ -19,48 +24,10 @@ class MonitAPIError(StandardError):
     pass
 
 
-def parse_monit_status(element):
-    """
-    Given an XML element representing a service, extract the
-    status information and return a tuple representing that
-    status. The tuple will be of the form (enable_state,
-    run_state) where enable_state is a boolean representing
-    whether the service is enabled or not, and run_state is a
-    boolean representing whether the service is running or
-    not. The value None for either component is to indicate that
-    it is either unknown or does not make sense for the service.
-    """
-    # The 'monitor' element tells us whether Monit is actively
-    # controlling the service or not. A 0 means Monit is not
-    # controlling the service. Sadly, when the service is stopped
-    # by Monit, this element says Monit is *not* controlling the
-    # service, even though it is. So, potentially, the service
-    # could be running, but Monit has been told not to control
-    # it. However, usually that is not the case and we're taking a
-    # shortcut here by assuming it isn't.
-    monitor = int(element.find('monitor').text)
-    if monitor == 0:
-        return (False, False)
-    # The 'status' element tells us whether the service is running
-    # or not. Any value other than 0 means the service is not
-    # running. More specific info is available via the web API,
-    # but lacking any documentation on what it means, that
-    # information is useless and we don't bother looking at it.
-    status = int(element.find('status').text)
-    if status == 0:
-        return (True, True)
-    else:
-        return (True, False)
-
-
 class Monit(Service):
     """
     Controls a service via the Monit web API.
     """
-
-    auth = url.HTTPBasicAuthHandler()
-    opener = None
-    uri = {}
 
     def _init_parser(self):
         parser = Service._init_parser(self)
@@ -78,8 +45,35 @@ class Monit(Service):
     def __init__(self, name, control_name=None, svc_args=[]):
         """
         Initialize a service controlled by Monit.
+
+        ``name``
+          Human-friendly name for the service.
+        ``control_name``
+          Name that the underlying service control system uses to
+          identify the service.
+        ``svc_args``
+          Command-line arguments specific to this service, in the
+          format expected by argparse_. Monit services require that
+          ``svc_args`` contains a list of hosts on which you wish to
+          control services. Monit services also use the following
+          options, if provided:
+
+          ``--username``
+            Username to use when authenticating to the Monit HTTP API.
+          ``--password``
+            Password to use when authenticating to the Monit HTTP API.
+          ``--port``
+            Port on which to connect to the Monit HTTP API.
+          ``--realm``
+            Authentication realm to use when authenticating to the Monit
+            HTTP API.
+
+        .. _argparse: http://docs.python.org/library/argparse.html
         """
         Service.__init__(self, name, control_name=control_name)
+        self.auth = url.HTTPBasicAuthHandler()
+        self.opener = None
+        self.uri = {}
         parser = self._init_parser()
         args = parser.parse_known_args(svc_args)[0]
         for host in args.hosts:
@@ -118,6 +112,39 @@ class Monit(Service):
                 status = self._status(host)
         return status
 
+    def _parse_monit_status(element):
+        """
+        Given an XML element representing a service, extract the
+        status information and return a tuple representing that
+        status. The tuple will be of the form (enable_state,
+        run_state) where enable_state is a boolean representing
+        whether the service is enabled or not, and run_state is a
+        boolean representing whether the service is running or
+        not. The value None for either component is to indicate that
+        it is either unknown or does not make sense for the service.
+        """
+        # The 'monitor' element tells us whether Monit is actively
+        # controlling the service or not. A 0 means Monit is not
+        # controlling the service. Sadly, when the service is stopped
+        # by Monit, this element says Monit is *not* controlling the
+        # service, even though it is. So, potentially, the service
+        # could be running, but Monit has been told not to control
+        # it. However, usually that is not the case and we're taking a
+        # shortcut here by assuming it isn't.
+        monitor = int(element.find('monitor').text)
+        if monitor == 0:
+            return (False, False)
+        # The 'status' element tells us whether the service is running
+        # or not. Any value other than 0 means the service is not
+        # running. More specific info is available via the web API,
+        # but lacking any documentation on what it means, that
+        # information is useless and we don't bother looking at it.
+        status = int(element.find('status').text)
+        if status == 0:
+            return (True, True)
+        else:
+            return (True, False)
+
     def _status(self, host):
         """
         Returns the status of the service as a dict.
@@ -144,7 +171,7 @@ class Monit(Service):
                                 self.control_name)
         status = {}
         service = services[0]
-        status['state'] = parse_monit_status(service)
+        status['state'] = self._parse_monit_status(service)
         pid = service.find('pid')
         if pid is not None:
             status['pid'] = int(pid.text)
@@ -155,7 +182,9 @@ class Monit(Service):
 
     def status(self):
         """
-        Returns the status of the service on each host.
+        Returns the status of the service on each host as a dict whose
+        keys are the host names and values are the status dictionary
+        for the service on that host.
         """
         status = {}
         for host in self.uri.keys():
@@ -164,13 +193,17 @@ class Monit(Service):
 
     def enable(self, wait=False):
         """
-        If the service is already enabled, this is a no-op. If the
-        service is not enabled, run any pre-enable hooks. If these
-        hooks ran sucessfully, attempt to enable the service. After
-        enabling the service, run any post-enable hooks. Finally,
-        return the result of calling status() on the service. If the
-        kwarg 'wait' is True, block until the state change is
-        confirmed in the API.
+        If monitoring of the service is already enabled, this is a
+        no-op. If monitoring is not enabled, run any ``pre-enable``
+        hooks. If these hooks ran sucessfully, attempt to enable
+        monitoring via a Monit HTTP API call. After enabling
+        monitoring, run any ``post-enable`` hooks. Finally, return the
+        result of calling calling :py:func:`status()
+        <piro.service.monit.Monit.status>` on the service.
+
+        ``wait``
+          If ``True``, block until the state change is confirmed in
+          the API.
         """
         status = {}
         for host in self.uri.keys():
@@ -181,13 +214,17 @@ class Monit(Service):
 
     def disable(self, wait=False):
         """
-        If the service is already disabled, this is a no-op. If the
-        service is enabled, run any pre-disable hooks. If these hooks
-        ran sucessfully, attempt to disable the service. After
-        disabling the service, run any post-disable hooks. Finally,
-        return the result of calling status() on the service. If the
-        kwarg 'wait' is True, block until the state change is
-        confirmed in the API.
+        If monitoring of the service is already disabled, this is a
+        no-op. If monitoring is not disabled, run any ``pre-disable``
+        hooks. If these hooks ran sucessfully, attempt to disable
+        monitoring via a Monit HTTP API call. After disabling
+        monitoring, run any ``post-disable`` hooks. Finally, return
+        the result of calling calling :py:func:`status()
+        <piro.service.monit.Monit.status>` on the service.
+
+        ``wait``
+          If ``True``, block until the state change is confirmed in
+          the API.
         """
         status = {}
         for host in self.uri.keys():
@@ -205,11 +242,16 @@ class Monit(Service):
     def start(self, wait=False):
         """
         If the service is already running, this is a no-op. If the
-        service is not running, run any pre-start hooks. If these
-        hooks ran sucessfully, attempt to start the service. Next, run
-        any post-start hooks. Finally, return the result of calling
-        status() on the service. If the kwarg 'wait' is True, block
-        until the state change is confirmed in the API.
+        service is not running, run any ``pre-start hooks``. If these
+        hooks ran sucessfully, attempt to start the service via a
+        Monit HTTP API call. Next, run any ``post-start``
+        hooks. Finally, return the result of calling
+        :py:func:`status() <piro.service.monit.Monit.status>` on the
+        service.
+
+        ``wait``
+          If ``True``, block until the state change is confirmed in
+          the API.
         """
         status = {}
         for host in self.uri.keys():
@@ -221,11 +263,15 @@ class Monit(Service):
     def stop(self, wait=False):
         """
         If the service is already stopped, this is a no-op. If the
-        service is running, run any pre-stop hooks. If these hooks ran
-        sucessfully, attempt to stop the service. Next, run any
-        post-stop hooks. Finally, return the result of calling
-        status() on the service. If the kwarg 'wait' is True, block
-        until the state change is confirmed in the API.
+        service is running, run any ``pre-stop hooks``. If these hooks
+        ran sucessfully, attempt to stop the service via a Monit HTTP
+        API call. Next, run any ``post-stop`` hooks. Finally, return
+        the result of calling :py:func:`status()
+        <piro.service.monit.Monit.status>` on the service.
+
+        ``wait``
+          If ``True``, block until the state change is confirmed in
+          the API.
         """
         status = {}
         for host in self.uri.keys():
