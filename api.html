@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Documentation &mdash; piro v1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="piro v1.0.0 documentation" href="index.html" />
+    <link rel="prev" title="Writing Plugins for Piro" href="plugins.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plugins.html" title="Writing Plugins for Piro"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">piro v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api-documentation">
+<h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-piro.service">
+<span id="service-api"></span><h2>Service API<a class="headerlink" href="#module-piro.service" title="Permalink to this headline">¶</a></h2>
+<p>Piro provides a basic Service API to define the most-common service
+control actions one might wish to perform. The base set of actions
+are:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>status</dt>
+<dd>Check whether the service is enabled/disabled and/or running/stopped.</dd>
+<dt>enable</dt>
+<dd>Enable the service. The semantics of what this means is generally
+left up to the sub-classes. The built-in <a class="reference internal" href="#piro.service.monit.Monit" title="piro.service.monit.Monit"><tt class="xref py py-class docutils literal"><span class="pre">Monit</span> <span class="pre">class</span></tt></a> uses enable to mean &#8216;enable monitoring
+of the service&#8217;.</dd>
+<dt>disable</dt>
+<dd>Disable the service. The semantics of what this means is generally
+left up to the sub-classes. The built-in <a class="reference internal" href="#piro.service.monit.Monit" title="piro.service.monit.Monit"><tt class="xref py py-class docutils literal"><span class="pre">Monit</span> <span class="pre">class</span></tt></a> uses disable to mean &#8216;disable
+monitoring of the service&#8217;.</dd>
+<dt>reload</dt>
+<dd>Reload the service. This is intended to be used for reloading the
+configuration of a service without restarting it.</dd>
+<dt>start</dt>
+<dd>Start the service.</dd>
+<dt>stop</dt>
+<dd>Stop the service.</dd>
+<dt>restart</dt>
+<dd>Restart the service.</dd>
+</dl>
+</div></blockquote>
+<p>Piro provides an abstract base class <a class="reference internal" href="#piro.service.Service" title="piro.service.Service"><tt class="xref py py-class docutils literal"><span class="pre">Service</span></tt></a> which defines this basic Service API as well
+as providing fucntionality for manipulating hooks - functions which
+run before/after the action that must return True for the action to
+succeed.</p>
+<p>Sub-classes may provide hooks for their own actions by adding
+action method names to the class variable <tt class="docutils literal"><span class="pre">HOOK_METHOD_NAMES</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+  <span class="n">HOOK_METHOD_NAMES</span> <span class="o">=</span> <span class="n">Service</span><span class="o">.</span><span class="n">HOOK_METHOD_NAMES</span> <span class="o">+</span> <span class="p">[</span><span class="s">&#39;my_hooked_action&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="section" id="service-abstract-class">
+<h3>Service abstract class<a class="headerlink" href="#service-abstract-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="piro.service.Service">
+<em class="property">class </em><tt class="descclassname">piro.service.</tt><tt class="descname">Service</tt><big>(</big><em>name</em>, <em>control_name=None</em><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class defining the service control API and providing
+the hook functionality to sub-classes.</p>
+<dl class="method">
+<dt id="piro.service.Service.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>control_name=None</em><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a Service object.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">name</span></tt></dt>
+<dd>Human-friendly name for the service.</dd>
+<dt><tt class="docutils literal"><span class="pre">control_name</span></tt></dt>
+<dd>Name that the underlying service control system uses to
+identify the service.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="piro.service.Service.HOOK_METHOD_NAMES">
+<tt class="descname">HOOK_METHOD_NAMES</tt><a class="headerlink" href="#piro.service.Service.HOOK_METHOD_NAMES" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of methods which allow for the attachment of pre/post action
+hooks.</p>
+<p>Sub-classes may provide hooks for their own actions by adding action
+method names to this class variable</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.Service.add_hook">
+<tt class="descname">add_hook</tt><big>(</big><em>name</em>, <em>fun</em><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.add_hook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.add_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a hook to the given service method.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">name</span></tt></dt>
+<dd>The name of the hook in the form
+<tt class="docutils literal"><span class="pre">(pre|post)-&lt;ACTION&gt;</span></tt>. For example, to add a hook to run
+before the <tt class="docutils literal"><span class="pre">start</span></tt> action, pass &#8216;pre-start&#8217; (or &#8216;pre_start&#8217;)
+as <tt class="docutils literal"><span class="pre">name</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">fun</span></tt></dt>
+<dd>A callable which returns True if the hook succeeds and
+False otherwise.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.Service.disable">
+<tt class="descname">disable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the service is already disabled, this is a no-op. If the
+service is enabled, run any <tt class="docutils literal"><span class="pre">pre-disable</span></tt> hooks. If these
+hooks ran sucessfully, attempt to disable the service. The
+semantics of what disabling a service means is left up to the
+individual service implementation. After disabling the
+service, run any <tt class="docutils literal"><span class="pre">post-disable</span> <span class="pre">hooks</span></tt>. Finally, return the
+result of calling <a class="reference internal" href="#piro.service.Service.status" title="piro.service.Service.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.Service.enable">
+<tt class="descname">enable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the service is already enabled, this is a no-op. If the
+service is not enabled, run any <tt class="docutils literal"><span class="pre">pre-enable</span></tt> hooks. If these
+hooks ran sucessfully, attempt to enable the service. The
+semantics of what enabling a service means is left up to the
+individual service implementation. After enabling the service,
+run any <tt class="docutils literal"><span class="pre">post-enable</span> <span class="pre">hooks</span></tt>. Finally, return the result of
+calling <a class="reference internal" href="#piro.service.Service.status" title="piro.service.Service.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on
+the service.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.Service.reload">
+<tt class="descname">reload</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.reload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.reload" title="Permalink to this definition">¶</a></dt>
+<dd><p>First, run any <tt class="docutils literal"><span class="pre">pre-reload</span></tt> hooks. Then, attempt to reload
+the configuration of the service. Next, run any
+<tt class="docutils literal"><span class="pre">post-reload</span></tt> hooks. Finally, return the result of calling
+<a class="reference internal" href="#piro.service.Service.status" title="piro.service.Service.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the
+service.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.Service.restart">
+<tt class="descname">restart</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.restart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.restart" title="Permalink to this definition">¶</a></dt>
+<dd><p>First, call <a class="reference internal" href="#piro.service.Service.stop" title="piro.service.Service.stop"><tt class="xref py py-func docutils literal"><span class="pre">stop()</span></tt></a> on
+the service, then call <a class="reference internal" href="#piro.service.Service.start" title="piro.service.Service.start"><tt class="xref py py-func docutils literal"><span class="pre">start()</span></tt></a> on the service. Finally return
+the result of calling <a class="reference internal" href="#piro.service.Service.status" title="piro.service.Service.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service. The restart
+action does not have any hooks of its own - add hooks to
+<a class="reference internal" href="#piro.service.Service.start" title="piro.service.Service.start"><tt class="xref py py-func docutils literal"><span class="pre">start()</span></tt></a> and/or
+<a class="reference internal" href="#piro.service.Service.stop" title="piro.service.Service.stop"><tt class="xref py py-func docutils literal"><span class="pre">stop()</span></tt></a> instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.Service.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the service is already running, this is a no-op. If the
+service is not running, run any pre-start hooks. If these
+hooks ran sucessfully, attempt to start the service. Next, run
+any post-start hooks. Finally, return the result of calling
+<a class="reference internal" href="#piro.service.Service.status" title="piro.service.Service.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.Service.status">
+<tt class="descname">status</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the status of the service. Service status should be
+returned as a dict. The status dict <strong>MUST</strong> contain the key
+<tt class="docutils literal"><span class="pre">state</span></tt> whose value <strong>MUST</strong> be a tuple of the form
+<tt class="docutils literal"><span class="pre">(enable_state,</span> <span class="pre">run_state)</span></tt> where <tt class="docutils literal"><span class="pre">enable_state</span></tt> is a
+boolean representing whether the service is enabled or not,
+and <tt class="docutils literal"><span class="pre">run_state</span></tt> is a boolean representing whether the
+service is running or not.  The value <tt class="xref docutils literal"><span class="pre">None</span></tt> for either
+component is to indicate that it is either unknown or does not
+make sense for the service in question. The status dict may
+contain other service-specific key/value pairs as well.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.Service.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the service is already stopped, this is a no-op. If the
+service is running, run any pre-stop hooks. If these hooks ran
+sucessfully, attempt to stop the service. Next, run any
+post-stop hooks. Finally, return the result of calling
+<a class="reference internal" href="#piro.service.Service.status" title="piro.service.Service.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="exceptions">
+<h3>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="piro.service.HookError">
+<em class="property">exception </em><tt class="descclassname">piro.service.</tt><tt class="descname">HookError</tt><a class="reference internal" href="_modules/piro/service.html#HookError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.HookError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.StandardError</span></tt></p>
+<p>Exception raised when a hook fails.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="built-in-service-control-classes">
+<h2>Built-in service control classes<a class="headerlink" href="#built-in-service-control-classes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-piro.service.monit">
+<span id="monit"></span><h3>Monit<a class="headerlink" href="#module-piro.service.monit" title="Permalink to this headline">¶</a></h3>
+<p>The monit module provides a buit-in service control class for
+controlling services running under <a class="reference external" href="http://mmonit.com/monit/">Monit</a>. This class assumes your
+services are exposed remotely by the <a class="reference external" href="http://mmonit.com/monit/documentation/monit.html#monit_httpd">Monit HTTP service</a>.</p>
+<dl class="class">
+<dt id="piro.service.monit.Monit">
+<em class="property">class </em><tt class="descclassname">piro.service.monit.</tt><tt class="descname">Monit</tt><big>(</big><em>name</em>, <em>control_name=None</em>, <em>svc_args=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#piro.service.Service" title="piro.service.Service"><tt class="xref py py-class docutils literal"><span class="pre">piro.service.Service</span></tt></a></p>
+<p>Controls a service via the Monit web API.</p>
+<dl class="method">
+<dt id="piro.service.monit.Monit.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>control_name=None</em>, <em>svc_args=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a service controlled by Monit.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">name</span></tt></dt>
+<dd>Human-friendly name for the service.</dd>
+<dt><tt class="docutils literal"><span class="pre">control_name</span></tt></dt>
+<dd>Name that the underlying service control system uses to
+identify the service.</dd>
+<dt><tt class="docutils literal"><span class="pre">svc_args</span></tt></dt>
+<dd><p class="first">Command-line arguments specific to this service, in the
+format expected by <a class="reference external" href="http://docs.python.org/library/argparse.html">argparse</a>. Monit services require that
+<tt class="docutils literal"><span class="pre">svc_args</span></tt> contains a list of hosts on which you wish to
+control services. Monit services also use the following
+options, if provided:</p>
+<dl class="last docutils">
+<dt><tt class="docutils literal"><span class="pre">--username</span></tt></dt>
+<dd>Username to use when authenticating to the Monit HTTP API.</dd>
+<dt><tt class="docutils literal"><span class="pre">--password</span></tt></dt>
+<dd>Password to use when authenticating to the Monit HTTP API.</dd>
+<dt><tt class="docutils literal"><span class="pre">--port</span></tt></dt>
+<dd>Port on which to connect to the Monit HTTP API.</dd>
+<dt><tt class="docutils literal"><span class="pre">--realm</span></tt></dt>
+<dd>Authentication realm to use when authenticating to the Monit
+HTTP API.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.monit.Monit.add_hook">
+<tt class="descname">add_hook</tt><big>(</big><em>name</em>, <em>fun</em><big>)</big><a class="headerlink" href="#piro.service.monit.Monit.add_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a hook to the given service method.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">name</span></tt></dt>
+<dd>The name of the hook in the form
+<tt class="docutils literal"><span class="pre">(pre|post)-&lt;ACTION&gt;</span></tt>. For example, to add a hook to run
+before the <tt class="docutils literal"><span class="pre">start</span></tt> action, pass &#8216;pre-start&#8217; (or &#8216;pre_start&#8217;)
+as <tt class="docutils literal"><span class="pre">name</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">fun</span></tt></dt>
+<dd>A callable which returns True if the hook succeeds and
+False otherwise.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.monit.Monit.disable">
+<tt class="descname">disable</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>If monitoring of the service is already disabled, this is a
+no-op. If monitoring is not disabled, run any <tt class="docutils literal"><span class="pre">pre-disable</span></tt>
+hooks. If these hooks ran sucessfully, attempt to disable
+monitoring via a Monit HTTP API call. After disabling
+monitoring, run any <tt class="docutils literal"><span class="pre">post-disable</span></tt> hooks. Finally, return
+the result of calling calling <a class="reference internal" href="#piro.service.monit.Monit.status" title="piro.service.monit.Monit.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">wait</span></tt></dt>
+<dd>If <tt class="xref docutils literal"><span class="pre">True</span></tt>, block until the state change is confirmed in
+the API.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.monit.Monit.enable">
+<tt class="descname">enable</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>If monitoring of the service is already enabled, this is a
+no-op. If monitoring is not enabled, run any <tt class="docutils literal"><span class="pre">pre-enable</span></tt>
+hooks. If these hooks ran sucessfully, attempt to enable
+monitoring via a Monit HTTP API call. After enabling
+monitoring, run any <tt class="docutils literal"><span class="pre">post-enable</span></tt> hooks. Finally, return the
+result of calling calling <a class="reference internal" href="#piro.service.monit.Monit.status" title="piro.service.monit.Monit.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">wait</span></tt></dt>
+<dd>If <tt class="xref docutils literal"><span class="pre">True</span></tt>, block until the state change is confirmed in
+the API.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.monit.Monit.reload">
+<tt class="descname">reload</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.reload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.reload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reload is not supported by Monit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.monit.Monit.restart">
+<tt class="descname">restart</tt><big>(</big><big>)</big><a class="headerlink" href="#piro.service.monit.Monit.restart" title="Permalink to this definition">¶</a></dt>
+<dd><p>First, call <a class="reference internal" href="#piro.service.Service.stop" title="piro.service.Service.stop"><tt class="xref py py-func docutils literal"><span class="pre">stop()</span></tt></a> on
+the service, then call <a class="reference internal" href="#piro.service.Service.start" title="piro.service.Service.start"><tt class="xref py py-func docutils literal"><span class="pre">start()</span></tt></a> on the service. Finally return
+the result of calling <a class="reference internal" href="#piro.service.Service.status" title="piro.service.Service.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service. The restart
+action does not have any hooks of its own - add hooks to
+<a class="reference internal" href="#piro.service.Service.start" title="piro.service.Service.start"><tt class="xref py py-func docutils literal"><span class="pre">start()</span></tt></a> and/or
+<a class="reference internal" href="#piro.service.Service.stop" title="piro.service.Service.stop"><tt class="xref py py-func docutils literal"><span class="pre">stop()</span></tt></a> instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.monit.Monit.start">
+<tt class="descname">start</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the service is already running, this is a no-op. If the
+service is not running, run any <tt class="docutils literal"><span class="pre">pre-start</span> <span class="pre">hooks</span></tt>. If these
+hooks ran sucessfully, attempt to start the service via a
+Monit HTTP API call. Next, run any <tt class="docutils literal"><span class="pre">post-start</span></tt>
+hooks. Finally, return the result of calling
+<a class="reference internal" href="#piro.service.monit.Monit.status" title="piro.service.monit.Monit.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the
+service.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">wait</span></tt></dt>
+<dd>If <tt class="xref docutils literal"><span class="pre">True</span></tt>, block until the state change is confirmed in
+the API.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.monit.Monit.status">
+<tt class="descname">status</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the status of the service on each host as a dict whose
+keys are the host names and values are the status dictionary
+for the service on that host.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piro.service.monit.Monit.stop">
+<tt class="descname">stop</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the service is already stopped, this is a no-op. If the
+service is running, run any <tt class="docutils literal"><span class="pre">pre-stop</span> <span class="pre">hooks</span></tt>. If these hooks
+ran sucessfully, attempt to stop the service via a Monit HTTP
+API call. Next, run any <tt class="docutils literal"><span class="pre">post-stop</span></tt> hooks. Finally, return
+the result of calling <a class="reference internal" href="#piro.service.monit.Monit.status" title="piro.service.monit.Monit.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">wait</span></tt></dt>
+<dd>If <tt class="xref docutils literal"><span class="pre">True</span></tt>, block until the state change is confirmed in
+the API.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="piro.service.monit.MonitAPIError">
+<em class="property">exception </em><tt class="descclassname">piro.service.monit.</tt><tt class="descname">MonitAPIError</tt><a class="reference internal" href="_modules/piro/service/monit.html#MonitAPIError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.MonitAPIError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.StandardError</span></tt></p>
+<p>Error raised when encountering problems communicating with the
+Monit web API.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API Documentation</a><ul>
+<li><a class="reference internal" href="#module-piro.service">Service API</a><ul>
+<li><a class="reference internal" href="#service-abstract-class">Service abstract class</a></li>
+<li><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#built-in-service-control-classes">Built-in service control classes</a><ul>
+<li><a class="reference internal" href="#module-piro.service.monit">Monit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="plugins.html"
+                        title="previous chapter">Writing Plugins for Piro</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plugins.html" title="Writing Plugins for Piro"
+             >previous</a> |</li>
+        <li><a href="index.html">piro v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Paul Lathrop.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

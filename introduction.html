@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; piro v1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="piro v1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Writing Plugins for Piro" href="plugins.html" />
+    <link rel="prev" title="Welcome to piro’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="plugins.html" title="Writing Plugins for Piro"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to piro’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">piro v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Piro is a Python library and command-line interface for intelligently
+managing services running on remote hosts. Piro can support service
+control on any service system that exposes a remote API (currently
+only <a class="reference external" href="http://mmonit.com/monit/">Monit</a> is supported, but we will add other systems as patches are
+made!). You can also create plugins for Piro to control services that
+aren&#8217;t supported by the base Piro library.</p>
+<p>Piro also makes it possible to add pre/post hooks to service actions;
+for example, before restarting a service you may want to call a
+function verifying the syntax of its configuration file &#8211; you can do
+this by adding a pre-start hook to your service.</p>
+<div class="section" id="command-line-interface">
+<h2>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
+<p>Piro&#8217;s command-line interface is the <tt class="docutils literal"><span class="pre">piro</span></tt> command:</p>
+<div class="highlight-python"><pre>usage: piro [-h] [-c CONTROL_NAME] action service
+
+Intelligently control services.
+
+positional arguments:
+  action                Name of the action you wish to perform on the given
+                        service.
+  service               Name of the service you wish to control.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CONTROL_NAME, --control-name CONTROL_NAME
+                        Name used by the underlying service control mechanism
+                        to identify the given service.</pre>
+</div>
+<p>Each plugin can define additional command-line options and/or
+arguments. For example, the base <tt class="xref py py-class docutils literal"><span class="pre">Service</span> <span class="pre">class</span></tt> adds <tt class="docutils literal"><span class="pre">--username</span></tt> and <tt class="docutils literal"><span class="pre">--password</span></tt> options
+for authenticating to the underlying service control mechanism.</p>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>Piro&#8217;s command-line interface looks for configuration in two places:
+<tt class="docutils literal"><span class="pre">/etc/piro/config.py</span></tt> and <tt class="docutils literal"><span class="pre">.piro.py</span></tt> in the user&#8217;s home
+directory. If both files exists, settings in the user-specific file
+over-ride those in <tt class="docutils literal"><span class="pre">/etc</span></tt>. The configuration file is
+Python. The available configuration options are:</p>
+<dl class="docutils">
+<dt>SERVICE_MAP</dt>
+<dd><p class="first">A dict; keys are service names and values are the
+fully-qualified name of the class which implements control of that
+service. The special key <tt class="docutils literal"><span class="pre">DEFAULT</span></tt> is used when no
+service-specific key is defined. for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">SERVICE_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;DEFAULT&#39;</span><span class="p">:</span> <span class="s">&#39;piro.service.monit.Monit&#39;</span><span class="p">,</span>
+               <span class="s">&#39;puppet&#39;</span><span class="p">:</span> <span class="s">&#39;piro.plugins.puppet.Puppet&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p class="last">would use the class Puppet from the module piro.plugins.puppet to
+control the <tt class="docutils literal"><span class="pre">puppet</span></tt> service, while all other services would be
+controlled by the build-in Monit class.</p>
+</dd>
+<dt>ALIAS_MAP</dt>
+<dd><p class="first">A dict; keys are service names and values are the name used by the
+underlying service controller. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ALIAS_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;nrpe&#39;</span><span class="p">:</span> <span class="s">&#39;nagios-nrpe-server&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p class="last">would establish an alias &#8216;nrpe&#8217; for the service called
+&#8216;nagios-nrpe-server&#8217; by your service controller. You could then use
+&#8216;nrep&#8217; as the service name in the command-line interface. Aliases
+are not used if <tt class="docutils literal"><span class="pre">--control-name</span></tt> is specified in your command-line
+options.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="controlling-a-monit-service">
+<h2>Controlling a Monit Service<a class="headerlink" href="#controlling-a-monit-service" title="Permalink to this headline">¶</a></h2>
+<p>If you are using <a class="reference external" href="http://mmonit.com/monit/">Monit</a>, and have set up the <a class="reference external" href="http://mmonit.com/monit/documentation/monit.html#monit_httpd">Monit HTTP service</a> you
+can use the built-in Monit class to control your services. Set the
+<tt class="docutils literal"><span class="pre">DEFAULT</span></tt> key in your <tt class="docutils literal"><span class="pre">SERVICE_MAP</span></tt> to
+&#8216;<tt class="docutils literal"><span class="pre">piro.service.monit.Monit</span></tt>&#8216; and use the command-line interface. For
+example, to restart a service called &#8216;nagios-nrpe-server&#8217;:</p>
+<div class="highlight-python"><pre>piro restart nagios-nrpe-server --username admin --password monit myhost.mydomain.com</pre>
+</div>
+<p>The <cite>&#8211;control-name</cite> argument can be used if you have configured the
+underlying service controller with a different name than the one you
+wish to use on the command-line. For example:</p>
+<div class="highlight-python"><pre>piro restart --control-name nagios-nrpe-server nrpe --username admin --password monit myhost.mydomain.com</pre>
+</div>
+<p>Control names can also be set using the <tt class="docutils literal"><span class="pre">ALIAS_MAP</span></tt> configuration
+setting, but <tt class="docutils literal"><span class="pre">ALIAS_MAP</span></tt> is over-ridden by <tt class="docutils literal"><span class="pre">--control-name</span></tt> if it
+is provided.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#command-line-interface">Command-Line Interface</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#controlling-a-monit-service">Controlling a Monit Service</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to piro&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="plugins.html"
+                        title="next chapter">Writing Plugins for Piro</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/introduction.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="plugins.html" title="Writing Plugins for Piro"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to piro’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">piro v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Paul Lathrop.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
