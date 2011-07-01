@@ -113,7 +113,8 @@ class Service(object):
         question. The status dict may contain other service-specific
         key/value pairs as well.
         """
-        raise NotImplementedError
+        raise NotImplementedError('"status" method not available for '
+                                  'service %s' % self.name)
 
     def enable(self):
         """
@@ -125,7 +126,8 @@ class Service(object):
         run any post-enable hooks. Finally, return the result of
         calling status() on the service.
         """
-        raise NotImplementedError
+        raise NotImplementedError('"enable" method not available for '
+                                  'service %s' % self.name)
 
     def disable(self):
         """
@@ -137,7 +139,8 @@ class Service(object):
         post-disable hooks. Finally, return the result of calling
         status() on the service.
         """
-        raise NotImplementedError
+        raise NotImplementedError('"disable" method not available for '
+                                  'service %s' % self.name)
 
     def reload(self):
         """
@@ -146,7 +149,8 @@ class Service(object):
         hooks. Finally, return the result of calling status() on the
         service.
         """
-        raise NotImplementedError
+        raise NotImplementedError('"reload" method not available for '
+                                  'service %s' % self.name)
 
     def start(self):
         """
@@ -156,7 +160,8 @@ class Service(object):
         any post-start hooks. Finally, return the result of calling
         status() on the service.
         """
-        raise NotImplementedError
+        raise NotImplementedError('"start" method not available for '
+                                  'service %s' % self.name)
 
     def stop(self):
         """
@@ -166,7 +171,8 @@ class Service(object):
         post-stop hooks. Finally, return the result of calling
         status() on the service.
         """
-        raise NotImplementedError
+        raise NotImplementedError('"stop" method not available for '
+                                  'service %s' % self.name)
 
     def restart(self):
         """
@@ -175,6 +181,10 @@ class Service(object):
         service. The restart action does not have any hooks of its own
         - add pre/post start/stop hooks instead.
         """
-        self.stop()
+        try:
+            self.stop()
+        except NotImplementedError:
+            raise NotImplementedError('"restart" method not available for '
+                                      'service %s' % self.name)
         self.start()
         return self.status()
