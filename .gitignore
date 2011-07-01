@@ -1,5 +1,7 @@
 .Python
 bin/
+dist/
 include/
 lib/
 *.egg-info/
+*.pyc
