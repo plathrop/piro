@@ -4,6 +4,7 @@ Configuration for piro.
 import os
 
 SERVICE_MAP = {}
+ALIAS_MAP = {}
 
 try:
     execfile('/etc/piro/config.py')

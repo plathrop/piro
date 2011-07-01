@@ -46,6 +46,11 @@ def main():
                         'mechanism to identify the given service.')
     args, svc_args = parser.parse_known_args()
     if args.control_name is None:
+        try:
+            args.control_name = conf.ALIAS_MAP[args.service]
+        except:
+            args.control_name = None
+    if args.control_name is None:
         args.control_name = args.service
     klass = get_class(args.service)
     service = klass(args.service,
