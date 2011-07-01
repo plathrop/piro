@@ -8,7 +8,7 @@ setup(name='piro',
       url='https://github.com/plathrop/piro',
       namespace_packages=['piro', 'piro.plugins', 'piro.util'],
       packages=find_packages(),
-      install_requires=['argparse'],
+      install_requires=['argparse', 'sphinx'],
       entry_points={'console_scripts':
                         ['piro = piro.cli:main']}
       )
