@@ -1,0 +1,26 @@
+Source: piro
+Section: misc
+Priority: extra
+Maintainer: Paul Lathrop <paul@simplegeo.com>
+Build-Depends: cdbs,
+ debhelper (>= 7),
+ python,
+ python-support,
+ python-setuptools,
+ python-argparse,
+ python-sphinx
+Standards-Version: 3.8.4
+Homepage: https://github.com/plathrop/piro
+
+Package: piro
+Architecture: all
+Depends: ${shlibs:Depends},
+ ${misc:Depends},
+ python,
+ python-support,
+ python-setuptools,
+ python-argparse,
+ python-sphinx
+Description: Intelligently manage services.
+ A command-line utility to help you intelligently start, stop,
+ restart, and check the status of services.
