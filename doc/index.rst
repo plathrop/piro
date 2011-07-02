@@ -6,6 +6,10 @@
 Welcome to piro's documentation!
 ================================
 
+Piro is a Python library and command-line interface for intelligently
+managing services running on remote hosts. Piro is open-source and
+available on github_!
+
 Contents:
 
 .. toctree::
@@ -22,3 +26,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+.. _github: http://github.com/plathrop/piro
