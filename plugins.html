@@ -34,6 +34,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="api.html" title="API Documentation"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -54,7 +57,7 @@
 namespace packages available for your use in extending Piro:
 <tt class="docutils literal"><span class="pre">piro.util</span></tt> and <tt class="docutils literal"><span class="pre">piro.plugins</span></tt>. <tt class="docutils literal"><span class="pre">piro.util</span></tt> is for utility code
 that your plugins will make use of. <tt class="docutils literal"><span class="pre">piro.plugins</span></tt> is for
-<tt class="xref py py-class docutils literal"><span class="pre">Service</span> <span class="pre">class</span></tt> subclasses which
+<a class="reference internal" href="api.html#piro.service.Service" title="piro.service.Service"><tt class="xref py py-class docutils literal"><span class="pre">Service</span> <span class="pre">class</span></tt></a> subclasses which
 allow you to control services that Piro cannot control natively; or to
 add pre and post-action hooks.</p>
 <p>To create a new Piro plugin, you must set up a new Python project
@@ -103,7 +106,7 @@ other code. See the <a class="reference external" href="http://peak.telecommunit
 <p>Now you may add your code in
 <tt class="docutils literal"><span class="pre">PROJECT_BASE/piro/plugins/myplugin.py</span></tt>. Utility code may be added
 to <tt class="docutils literal"><span class="pre">PROJECT_BASE/piro/util/myutil.py</span></tt>. Most likely, you will want
-your plugin to inherit from <tt class="xref py py-class docutils literal"><span class="pre">Service</span></tt>
+your plugin to inherit from <a class="reference internal" href="api.html#piro.service.Service" title="piro.service.Service"><tt class="xref py py-class docutils literal"><span class="pre">Service</span></tt></a>
 and provide implementations of the Service API methods. You may also
 want to define action hooks and add them to your services.</p>
 <div class="section" id="using-a-custom-plugin">
@@ -166,6 +169,9 @@ setuptools (<tt class="docutils literal"><span class="pre">python</span> <span c
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="api.html" title="API Documentation"
              >next</a> |</li>
