@@ -8,8 +8,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>API Documentation &mdash; piro v1.0.0 documentation</title>
-    <link rel="stylesheet" href=".static/default.css" type="text/css" />
-    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -19,9 +19,9 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src=".static/jquery.js"></script>
-    <script type="text/javascript" src=".static/underscore.js"></script>
-    <script type="text/javascript" src=".static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="piro v1.0.0 documentation" href="index.html" />
     <link rel="prev" title="Writing Plugins for Piro" href="plugins.html" /> 
   </head>
@@ -91,12 +91,12 @@ action method names to the class variable <tt class="docutils literal"><span cla
 <h3>Service abstract class<a class="headerlink" href="#service-abstract-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="piro.service.Service">
-<em class="property">class </em><tt class="descclassname">piro.service.</tt><tt class="descname">Service</tt><big>(</big><em>name</em>, <em>control_name=None</em><big>)</big><a class="reference internal" href=".module/piro/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">piro.service.</tt><tt class="descname">Service</tt><big>(</big><em>name</em>, <em>control_name=None</em><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class defining the service control API and providing
 the hook functionality to sub-classes.</p>
 <dl class="method">
 <dt id="piro.service.Service.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>control_name=None</em><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>control_name=None</em><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize a Service object.</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">name</span></tt></dt>
@@ -118,7 +118,7 @@ method names to this class variable</p>
 
 <dl class="method">
 <dt id="piro.service.Service.add_hook">
-<tt class="descname">add_hook</tt><big>(</big><em>name</em>, <em>fun</em><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.add_hook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.add_hook" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">add_hook</tt><big>(</big><em>name</em>, <em>fun</em><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.add_hook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.add_hook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a hook to the given service method.</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">name</span></tt></dt>
@@ -134,7 +134,7 @@ False otherwise.</dd>
 
 <dl class="method">
 <dt id="piro.service.Service.disable">
-<tt class="descname">disable</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.disable" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">disable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.disable" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the service is already disabled, this is a no-op. If the
 service is enabled, run any <tt class="docutils literal"><span class="pre">pre-disable</span></tt> hooks. If these
 hooks ran sucessfully, attempt to disable the service. The
@@ -146,7 +146,7 @@ result of calling <a class="reference internal" href="#piro.service.Service.stat
 
 <dl class="method">
 <dt id="piro.service.Service.enable">
-<tt class="descname">enable</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.enable" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">enable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.enable" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the service is already enabled, this is a no-op. If the
 service is not enabled, run any <tt class="docutils literal"><span class="pre">pre-enable</span></tt> hooks. If these
 hooks ran sucessfully, attempt to enable the service. The
@@ -159,7 +159,7 @@ the service.</p>
 
 <dl class="method">
 <dt id="piro.service.Service.reload">
-<tt class="descname">reload</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.reload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.reload" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">reload</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.reload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.reload" title="Permalink to this definition">¶</a></dt>
 <dd><p>First, run any <tt class="docutils literal"><span class="pre">pre-reload</span></tt> hooks. Then, attempt to reload
 the configuration of the service. Next, run any
 <tt class="docutils literal"><span class="pre">post-reload</span></tt> hooks. Finally, return the result of calling
@@ -169,7 +169,7 @@ service.</p>
 
 <dl class="method">
 <dt id="piro.service.Service.restart">
-<tt class="descname">restart</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.restart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.restart" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">restart</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.restart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.restart" title="Permalink to this definition">¶</a></dt>
 <dd><p>First, call <a class="reference internal" href="#piro.service.Service.stop" title="piro.service.Service.stop"><tt class="xref py py-func docutils literal"><span class="pre">stop()</span></tt></a> on
 the service, then call <a class="reference internal" href="#piro.service.Service.start" title="piro.service.Service.start"><tt class="xref py py-func docutils literal"><span class="pre">start()</span></tt></a> on the service. Finally return
 the result of calling <a class="reference internal" href="#piro.service.Service.status" title="piro.service.Service.status"><tt class="xref py py-func docutils literal"><span class="pre">status()</span></tt></a> on the service. The restart
@@ -180,7 +180,7 @@ action does not have any hooks of its own - add hooks to
 
 <dl class="method">
 <dt id="piro.service.Service.start">
-<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.start" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the service is already running, this is a no-op. If the
 service is not running, run any pre-start hooks. If these
 hooks ran sucessfully, attempt to start the service. Next, run
@@ -190,7 +190,7 @@ any post-start hooks. Finally, return the result of calling
 
 <dl class="method">
 <dt id="piro.service.Service.status">
-<tt class="descname">status</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.status" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">status</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the status of the service. Service status should be
 returned as a dict. The status dict <strong>MUST</strong> contain the key
 <tt class="docutils literal"><span class="pre">state</span></tt> whose value <strong>MUST</strong> be a tuple of the form
@@ -205,7 +205,7 @@ contain other service-specific key/value pairs as well.</p>
 
 <dl class="method">
 <dt id="piro.service.Service.stop">
-<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service.html#Service.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.stop" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service.html#Service.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.Service.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the service is already stopped, this is a no-op. If the
 service is running, run any pre-stop hooks. If these hooks ran
 sucessfully, attempt to stop the service. Next, run any
@@ -220,7 +220,7 @@ post-stop hooks. Finally, return the result of calling
 <h3>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h3>
 <dl class="exception">
 <dt id="piro.service.HookError">
-<em class="property">exception </em><tt class="descclassname">piro.service.</tt><tt class="descname">HookError</tt><a class="reference internal" href=".module/piro/service.html#HookError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.HookError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><tt class="descclassname">piro.service.</tt><tt class="descname">HookError</tt><a class="reference internal" href="_modules/piro/service.html#HookError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.HookError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.StandardError</span></tt></p>
 <p>Exception raised when a hook fails.</p>
 </dd></dl>
@@ -236,12 +236,12 @@ controlling services running under <a class="reference external" href="http://mm
 services are exposed remotely by the <a class="reference external" href="http://mmonit.com/monit/documentation/monit.html#monit_httpd">Monit HTTP service</a>.</p>
 <dl class="class">
 <dt id="piro.service.monit.Monit">
-<em class="property">class </em><tt class="descclassname">piro.service.monit.</tt><tt class="descname">Monit</tt><big>(</big><em>name</em>, <em>control_name=None</em>, <em>svc_args=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href=".module/piro/service/monit.html#Monit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">piro.service.monit.</tt><tt class="descname">Monit</tt><big>(</big><em>name</em>, <em>control_name=None</em>, <em>svc_args=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#piro.service.Service" title="piro.service.Service"><tt class="xref py py-class docutils literal"><span class="pre">piro.service.Service</span></tt></a></p>
 <p>Controls a service via the Monit web API.</p>
 <dl class="method">
 <dt id="piro.service.monit.Monit.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>control_name=None</em>, <em>svc_args=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href=".module/piro/service/monit.html#Monit.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>control_name=None</em>, <em>svc_args=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize a service controlled by Monit.</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">name</span></tt></dt>
@@ -288,7 +288,7 @@ False otherwise.</dd>
 
 <dl class="method">
 <dt id="piro.service.monit.Monit.disable">
-<tt class="descname">disable</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href=".module/piro/service/monit.html#Monit.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.disable" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">disable</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.disable" title="Permalink to this definition">¶</a></dt>
 <dd><p>If monitoring of the service is already disabled, this is a
 no-op. If monitoring is not disabled, run any <tt class="docutils literal"><span class="pre">pre-disable</span></tt>
 hooks. If these hooks ran sucessfully, attempt to disable
@@ -304,7 +304,7 @@ the API.</dd>
 
 <dl class="method">
 <dt id="piro.service.monit.Monit.enable">
-<tt class="descname">enable</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href=".module/piro/service/monit.html#Monit.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.enable" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">enable</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.enable" title="Permalink to this definition">¶</a></dt>
 <dd><p>If monitoring of the service is already enabled, this is a
 no-op. If monitoring is not enabled, run any <tt class="docutils literal"><span class="pre">pre-enable</span></tt>
 hooks. If these hooks ran sucessfully, attempt to enable
@@ -320,7 +320,7 @@ the API.</dd>
 
 <dl class="method">
 <dt id="piro.service.monit.Monit.reload">
-<tt class="descname">reload</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service/monit.html#Monit.reload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.reload" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">reload</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.reload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.reload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reload is not supported by Monit.</p>
 </dd></dl>
 
@@ -337,7 +337,7 @@ action does not have any hooks of its own - add hooks to
 
 <dl class="method">
 <dt id="piro.service.monit.Monit.start">
-<tt class="descname">start</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href=".module/piro/service/monit.html#Monit.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.start" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">start</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the service is already running, this is a no-op. If the
 service is not running, run any <tt class="docutils literal"><span class="pre">pre-start</span> <span class="pre">hooks</span></tt>. If these
 hooks ran sucessfully, attempt to start the service via a
@@ -354,7 +354,7 @@ the API.</dd>
 
 <dl class="method">
 <dt id="piro.service.monit.Monit.status">
-<tt class="descname">status</tt><big>(</big><big>)</big><a class="reference internal" href=".module/piro/service/monit.html#Monit.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.status" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">status</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the status of the service on each host as a dict whose
 keys are the host names and values are the status dictionary
 for the service on that host.</p>
@@ -362,7 +362,7 @@ for the service on that host.</p>
 
 <dl class="method">
 <dt id="piro.service.monit.Monit.stop">
-<tt class="descname">stop</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href=".module/piro/service/monit.html#Monit.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.stop" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">stop</tt><big>(</big><em>wait=False</em><big>)</big><a class="reference internal" href="_modules/piro/service/monit.html#Monit.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.Monit.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the service is already stopped, this is a no-op. If the
 service is running, run any <tt class="docutils literal"><span class="pre">pre-stop</span> <span class="pre">hooks</span></tt>. If these hooks
 ran sucessfully, attempt to stop the service via a Monit HTTP
@@ -379,7 +379,7 @@ the API.</dd>
 
 <dl class="exception">
 <dt id="piro.service.monit.MonitAPIError">
-<em class="property">exception </em><tt class="descclassname">piro.service.monit.</tt><tt class="descname">MonitAPIError</tt><a class="reference internal" href=".module/piro/service/monit.html#MonitAPIError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.MonitAPIError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><tt class="descclassname">piro.service.monit.</tt><tt class="descname">MonitAPIError</tt><a class="reference internal" href="_modules/piro/service/monit.html#MonitAPIError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piro.service.monit.MonitAPIError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.StandardError</span></tt></p>
 <p>Error raised when encountering problems communicating with the
 Monit web API.</p>
@@ -416,7 +416,7 @@ Monit web API.</p>
                         title="previous chapter">Writing Plugins for Piro</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href=".sources/api.txt"
+    <li><a href="_sources/api.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
