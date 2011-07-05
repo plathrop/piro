@@ -17,7 +17,7 @@ def get_class(service):
     try:
         name = conf.SERVICE_MAP[service]
     except KeyError:
-        pass
+        name = None
     if name is None:
         try:
             name = conf.SERVICE_MAP['DEFAULT']
