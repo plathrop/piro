@@ -18,6 +18,7 @@ Contents:
    introduction
    plugins
    api
+   license
 
 Indices and tables
 ==================
