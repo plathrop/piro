@@ -34,6 +34,12 @@ class Monit(Service):
         parser.add_argument('hosts', nargs='+',
                             help='Hosts on which you wish to control the '
                             'service.')
+        parser.add_argument('-u', '--username', default='',
+                            help='Username to use when authenticating to the '
+                            'underlying service control mechanism.')
+        parser.add_argument('--password', default='',
+                            help='Password to use when authenticating to the '
+                            'underlying service control mechanism.')
         parser.add_argument('--port', type=int, default=2812,
                             help='Port where the Monit API is listening on '
                             'the given hosts')

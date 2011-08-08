@@ -80,12 +80,6 @@ class Service(object):
         and returns it.
         """
         parser = ArgumentParser()
-        parser.add_argument('-u', '--username', default='',
-                            help='Username to use when authenticating to the '
-                            'underlying service control mechanism.')
-        parser.add_argument('--password', default='',
-                            help='Password to use when authenticating to the '
-                            'underlying service control mechanism.')
         return parser
 
     def _run_hooks(self, name):
