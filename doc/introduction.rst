@@ -48,6 +48,14 @@ directory. If both files exists, settings in the user-specific file
 over-ride those in ``/etc``. The configuration file is
 Python. The available configuration options are:
 
+USERNAME
+  The username to use for actions/services which require one. This
+  defaults to your username on the local system as returned by
+  Python's ``getpass.getuser()`` function.
+
+PASSWORD
+  The password to use for actions/services which require one.
+
 SERVICE_MAP
   A dict; keys are service names and values are the
   fully-qualified name of the class which implements control of that
@@ -72,6 +80,13 @@ ALIAS_MAP
   'nrep' as the service name in the command-line interface. Aliases
   are not used if ``--control-name`` is specified in your command-line
   options.
+
+The ``USERNAME`` and ``PASSWORD`` settings can also be set via
+the ``PIRO_USERNAME`` and ``PIRO_PASSWORD`` environment variables. If
+set in this way, the environment variables will over-ride the values
+in the configuration files. If the password is not set in the config
+or the environment, and a password is required, it is up to the
+individual plugin to get a password from the user.
 
 Controlling a Monit Service
 ---------------------------
