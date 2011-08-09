@@ -67,7 +67,7 @@ def main():
         if plugin is None:
             plist = plugins_list('piro.service')
             if plist:
-                print 'Available build-in service controllers:'
+                print 'Available built-in service controllers:'
                 for item in plist:
                     print '  %s.%s' % ('piro.service', item)
             plist = plugins_list('piro.plugins')
