@@ -35,9 +35,20 @@ Piro's command-line interface is the ``piro`` command::
                           to identify the given service.
 
 Each plugin can define additional command-line options and/or
-arguments. For example, the base :py:class:`Service class
-<piro.service.Service>` adds ``--username`` and ``--password`` options
-for authenticating to the underlying service control mechanism.
+arguments. For example, the :py:class:`Monit class
+<piro.service.monit.Monit>` adds ``--username`` and ``--password``
+options for authenticating to the underlying service control
+mechanism.
+
+You can list available plugins with the command ``piro list`` and find
+out what actions are available on a given plugin with ``piro list
+plugin_name``. Keep in mind that this list includes the base actions
+defined be the :py:class:`Service class <piro.service.Service>` even
+if they are the default implementation (which is to raise a
+``NotImplementedError``.
+
+Finally, you can find out what the plugin-specific CLI arguments are
+by using ``piro help service_name``.
 
 Configuration
 -------------
