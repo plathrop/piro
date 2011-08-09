@@ -93,6 +93,12 @@ directory. If both files exists, settings in the user-specific file
 over-ride those in <tt class="docutils literal"><span class="pre">/etc</span></tt>. The configuration file is
 Python. The available configuration options are:</p>
 <dl class="docutils">
+<dt>USERNAME</dt>
+<dd>The username to use for actions/services which require one. This
+defaults to your username on the local system as returned by
+Python&#8217;s <tt class="docutils literal"><span class="pre">getpass.getuser()</span></tt> function.</dd>
+<dt>PASSWORD</dt>
+<dd>The password to use for actions/services which require one.</dd>
 <dt>SERVICE_MAP</dt>
 <dd><p class="first">A dict; keys are service names and values are the
 fully-qualified name of the class which implements control of that
@@ -119,6 +125,12 @@ are not used if <tt class="docutils literal"><span class="pre">--control-name</s
 options.</p>
 </dd>
 </dl>
+<p>The <tt class="docutils literal"><span class="pre">USERNAME</span></tt> and <tt class="docutils literal"><span class="pre">PASSWORD</span></tt> settings can also be set via
+the <tt class="docutils literal"><span class="pre">PIRO_USERNAME</span></tt> and <tt class="docutils literal"><span class="pre">PIRO_PASSWORD</span></tt> environment variables. If
+set in this way, the environment variables will over-ride the values
+in the configuration files. If the password is not set in the config
+or the environment, and a password is required, it is up to the
+individual plugin to get a password from the user.</p>
 </div>
 <div class="section" id="controlling-a-monit-service">
 <h2>Controlling a Monit Service<a class="headerlink" href="#controlling-a-monit-service" title="Permalink to this headline">¶</a></h2>

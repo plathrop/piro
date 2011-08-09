@@ -78,11 +78,18 @@
 <span class="sd">    Controls a service via the Monit web API.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_init_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">parser</span> <span class="o">=</span> <span class="n">Service</span><span class="o">.</span><span class="n">_init_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_init_parser</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">Service</span><span class="o">.</span><span class="n">_init_parser</span><span class="p">()</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;hosts&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span><span class="p">,</span>
                             <span class="n">help</span><span class="o">=</span><span class="s">&#39;Hosts on which you wish to control the &#39;</span>
-                            <span class="s">&#39;service.&#39;</span><span class="p">)</span>
+                            <span class="s">&#39;monit service.&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-u&#39;</span><span class="p">,</span> <span class="s">&#39;--username&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s">&#39;Username to use when authenticating to the &#39;</span>
+                            <span class="s">&#39;underlying service control mechanism.&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--password&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s">&#39;Password to use when authenticating to the &#39;</span>
+                            <span class="s">&#39;underlying service control mechanism.&#39;</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--port&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2812</span><span class="p">,</span>
                             <span class="n">help</span><span class="o">=</span><span class="s">&#39;Port where the Monit API is listening on &#39;</span>
                             <span class="s">&#39;the given hosts&#39;</span><span class="p">)</span>

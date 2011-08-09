@@ -122,18 +122,13 @@
 
 <span class="c"># Services class functionality for use by subclasses.</span>
 
-    <span class="k">def</span> <span class="nf">_init_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_init_parser</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the service-specific parser with common arguments</span>
 <span class="sd">        and returns it.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-u&#39;</span><span class="p">,</span> <span class="s">&#39;--username&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
-                            <span class="n">help</span><span class="o">=</span><span class="s">&#39;Username to use when authenticating to the &#39;</span>
-                            <span class="s">&#39;underlying service control mechanism.&#39;</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--password&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
-                            <span class="n">help</span><span class="o">=</span><span class="s">&#39;Password to use when authenticating to the &#39;</span>
-                            <span class="s">&#39;underlying service control mechanism.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span>
 
     <span class="k">def</span> <span class="nf">_run_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
