@@ -74,7 +74,8 @@ class Service(object):
 
 # Services class functionality for use by subclasses.
 
-    def _init_parser(self):
+    @classmethod
+    def _init_parser(cls):
         """
         Initializes the service-specific parser with common arguments
         and returns it.
