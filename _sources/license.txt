@@ -1,5 +1,5 @@
 =======
-License
+LICENSE
 =======
 
 Copyright (c) 2011 Paul Lathrop <plathrop@tertiusfamily.net>

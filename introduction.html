@@ -82,8 +82,17 @@ optional arguments:
                         to identify the given service.</pre>
 </div>
 <p>Each plugin can define additional command-line options and/or
-arguments. For example, the base <a class="reference internal" href="api.html#piro.service.Service" title="piro.service.Service"><tt class="xref py py-class docutils literal"><span class="pre">Service</span> <span class="pre">class</span></tt></a> adds <tt class="docutils literal"><span class="pre">--username</span></tt> and <tt class="docutils literal"><span class="pre">--password</span></tt> options
-for authenticating to the underlying service control mechanism.</p>
+arguments. For example, the <a class="reference internal" href="api.html#piro.service.monit.Monit" title="piro.service.monit.Monit"><tt class="xref py py-class docutils literal"><span class="pre">Monit</span> <span class="pre">class</span></tt></a> adds <tt class="docutils literal"><span class="pre">--username</span></tt> and <tt class="docutils literal"><span class="pre">--password</span></tt>
+options for authenticating to the underlying service control
+mechanism.</p>
+<p>You can list available plugins with the command <tt class="docutils literal"><span class="pre">piro</span> <span class="pre">list</span></tt> and find
+out what actions are available on a given plugin with <tt class="docutils literal"><span class="pre">piro</span> <span class="pre">list</span>
+<span class="pre">plugin_name</span></tt>. Keep in mind that this list includes the base actions
+defined be the <a class="reference internal" href="api.html#piro.service.Service" title="piro.service.Service"><tt class="xref py py-class docutils literal"><span class="pre">Service</span> <span class="pre">class</span></tt></a> even
+if they are the default implementation (which is to raise a
+<tt class="docutils literal"><span class="pre">NotImplementedError</span></tt>.</p>
+<p>Finally, you can find out what the plugin-specific CLI arguments are
+by using <tt class="docutils literal"><span class="pre">piro</span> <span class="pre">help</span> <span class="pre">service_name</span></tt>.</p>
 </div>
 <div class="section" id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
