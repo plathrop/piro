@@ -45,7 +45,7 @@ out what actions are available on a given plugin with ``piro list
 plugin_name``. Keep in mind that this list includes the base actions
 defined be the :py:class:`Service class <piro.service.Service>` even
 if they are the default implementation (which is to raise a
-``NotImplementedError``.
+``NotImplementedError``).
 
 Finally, you can find out what the plugin-specific CLI arguments are
 by using ``piro help service_name``.
