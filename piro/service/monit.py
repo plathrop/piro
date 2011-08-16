@@ -119,7 +119,7 @@ class Monit(Service):
                 status = self._status(host)
         return status
 
-    def _parse_monit_status(element):
+    def _parse_monit_status(self, element):
         """
         Given an XML element representing a service, extract the
         status information and return a tuple representing that
@@ -156,6 +156,7 @@ class Monit(Service):
         """
         Returns the status of the service as a dict.
         """
+        print '%s/_status?format=xml' % self.uri[host]
         with closing(url.urlopen('%s/_status?format=xml' % self.uri[host],
                                  timeout=1)) as res:
             data = res.read()
